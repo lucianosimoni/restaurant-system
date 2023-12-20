@@ -37,24 +37,16 @@ export async function login(req, res) {
 }
 
 export async function register(req, res) {
-  const { credential, password, firstName, lastName, role, avatarUrl } =
-    req.body;
+  const { credential, password, firstName, lastName, imageURL } = req.body;
 
-  if (
-    !credential ||
-    !password ||
-    !firstName ||
-    !lastName ||
-    !role ||
-    !avatarUrl
-  ) {
+  if (!credential || !password || !firstName || !lastName || !imageURL) {
     return missingBody(res);
   }
 
   const credentialExists = await getStaffByCredential(credential);
   if (credentialExists) {
     res.status(409).json({
-      error: { message: "Account already exists" },
+      error: { message: "Account with entered Credential already exists" },
     });
     return;
   }
@@ -66,8 +58,7 @@ export async function register(req, res) {
     passwordHash: hashedPassword,
     firstName: firstName,
     lastName: lastName,
-    role: role,
-    avatarUrl: avatarUrl,
+    imageURL: imageURL,
   });
   if (!staff) {
     res.status(500).json({ error: { message: "An error occurred." } });
