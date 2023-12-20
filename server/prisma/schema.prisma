@@ -17,7 +17,7 @@ model Staff {
   passwordHash String
   // 🔌 Connections
   sectorLeader SectorLeader?
-  staffInfo    StaffInfo     @relation(fields: [staffInfoId], references: [id]) // Mandatory One-to-one relation to Profile
+  staffInfo    StaffInfo     @relation(fields: [staffInfoId], references: [id]) // Mandatory One-to-one relation to StaffInfo
   staffInfoId  Int           @unique //✈️FK🟡
   sector       Sector?       @relation(fields: [sectorId], references: [id]) // Optional Many-to-one relation to Sector
   sectorId     Int? //✈️FK🟡

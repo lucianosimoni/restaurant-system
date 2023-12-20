@@ -19,7 +19,8 @@ const corsOptions = {
     else callback(`🔴⚠️ Not allowed by CORS from origin: ${origin}`, false);
   },
 };
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors()); // FIXME: Only for Dev purposes!
 
 app.use(morgan("dev"));
 app.use(express.json());

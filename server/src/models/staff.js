@@ -7,7 +7,7 @@ export async function createStaff(staffData) {
       data: {
         credential: staffData.credential,
         passwordHash: staffData.passwordHash,
-        Profile: {
+        staffInfo: {
           create: {
             firstName: staffData.firstName,
             lastName: staffData.lastName,
@@ -15,7 +15,7 @@ export async function createStaff(staffData) {
         },
       },
       include: {
-        Profile: true,
+        staffInfo: true,
       },
     })
     .then((createdStaff) => {
@@ -45,7 +45,7 @@ export async function getStaffByCredential(staffCredential) {
         credential: staffCredential,
       },
       include: {
-        Profile: true,
+        staffInfo: true,
       },
     });
     return staff;
