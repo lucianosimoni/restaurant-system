@@ -1,0 +1,112 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model Staff {
+  id           Int           @id @default(autoincrement())
+  credential   String        @unique
+  passwordHash String
+  // 🔌 Connections
+  sectorLeader SectorLeader?
+  staffInfo    StaffInfo     @relation(fields: [staffInfoId], references: [id]) // Mandatory One-to-one relation to Profile
+  staffInfoId  Int           @unique //✈️FK🟡
+  sector       Sector?       @relation(fields: [sectorId], references: [id]) // Optional Many-to-one relation to Sector
+  sectorId     Int? //✈️FK🟡
+}
+
+model StaffInfo {
+  id        Int    @id @default(autoincrement())
+  firstName String
+  lastName  String
+  role      String @default("STAFF")
+  // 🔌 Connections
+  staff     Staff?
+}
+
+model Sector {
+  id             Int           @id @default(autoincrement())
+  title          String        @unique
+  description    String?
+  // 🔌 Connections
+  staff          Staff[] // One-to-many relation to Staff
+  screen         Screen[] // Many-to-Many relation to Screen
+  sectorLeader   SectorLeader?
+  childSectors   Sector[]      @relation("SectorToSector") // Self-relation for nested sectors
+  parentSector   Sector?       @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
+  parentSectorId Int? //✈️FK🟡
+}
+
+model SectorLeader {
+  id       Int    @id @default(autoincrement())
+  // 🔌 Connections
+  staff    Staff  @relation(fields: [staffId], references: [id]) // Mandatory One-to-one relation to Staff
+  staffId  Int    @unique //✈️FK🟡
+  sector   Sector @relation(fields: [sectorId], references: [id]) // Mandatory One-to-one relation to Sector
+  sectorId Int    @unique //✈️FK🟡
+}
+
+model Category {
+  id             Int          @id @default(autoincrement())
+  title          String       @unique
+  // 🔌 Connections
+  item           Item[]
+  categoryInfo   CategoryInfo @relation(fields: [categoryInfoId], references: [id])
+  categoryInfoId Int          @unique //✈️FK🟡
+}
+
+model CategoryInfo {
+  id          Int       @id @default(autoincrement())
+  description String?
+  imageURL    String?
+  // 🔌 Connections
+  category    Category?
+}
+
+model Item {
+  id         Int        @id @default(autoincrement())
+  code       Int        @unique @default(autoincrement())
+  title      String     @unique
+  // 🔌 Connections
+  category   Category[]
+  itemInfo   ItemInfo   @relation(fields: [itemInfoId], references: [id])
+  itemInfoId Int        @unique //✈️FK🟡
+}
+
+model ItemInfo {
+  id          Int     @id @default(autoincrement())
+  description String?
+  imageURL    String?
+  price       Float
+  cost        Float
+  type        String  @default("00")
+  unitSystem  String  @default("UN")
+  // 🔌 Connections
+  item        Item?
+}
+
+// Screens (Pre-defined by Devs) -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+model Screen {
+  id           Int        @id @default(autoincrement())
+  title        String     @unique
+  // 🔌 Connections
+  screenInfo   ScreenInfo @relation(fields: [screenInfoId], references: [id])
+  screenInfoId Int        @unique
+  sector       Sector[]
+}
+
+model ScreenInfo {
+  id          Int     @id @default(autoincrement())
+  description String?
+  path        String  @unique
+  // 🔌 Connections
+  screen      Screen?
+}
