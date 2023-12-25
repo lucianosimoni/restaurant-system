@@ -5,9 +5,11 @@ import { fetchServerResponse } from "next/dist/client/components/router-reducer/
 import Error from "next/error";
 import { saveProfile } from "@/lib/appLocalStorage";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isRequestAccessLoading, setIsRequestAccessLoading] = useState(false);
   const [error, setError] = useState({ message: "", show: false });
   const router = useRouter();
 
@@ -96,6 +98,18 @@ export default function LoginForm() {
         isLoading={isLoading}
       >
         Entrar
+      </Button>
+      <Button
+        as={Link}
+        type="button"
+        color="default"
+        size="lg"
+        className="md:w-1/2 w-full"
+        href="/request-access"
+        onClick={() => setIsRequestAccessLoading(true)}
+        isLoading={isRequestAccessLoading}
+      >
+        Não tenho uma conta
       </Button>
 
       {error.show && (
