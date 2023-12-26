@@ -8,11 +8,10 @@ export default function Home() {
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    const profile = getProfile();
-
-    if (!profile.loggedIn) router.replace("/login");
-  }, []);
+  const profile = getProfile();
+  if (!profile.loggedIn) {
+    return router.replace("/login");
+  }
 
   return (
     <>

@@ -33,8 +33,6 @@ export default function LoginForm() {
       });
 
       const parsedResponse = await response.json();
-      console.log(response);
-      console.log(parsedResponse);
 
       if (!response.ok) {
         const newError = new Error(parsedResponse.error.message as any) as any;
@@ -45,11 +43,18 @@ export default function LoginForm() {
 
       const loggedInStaff = parsedResponse.loggedInStaff;
 
+      console.log("parsed res is:");
+      console.log(parsedResponse.loggedInStaff);
+
       saveProfile({
+        token: loggedInStaff.token,
+        id: loggedInStaff.id,
         credential: loggedInStaff.credential,
         firstName: loggedInStaff.staffInfo.firstName,
         lastName: loggedInStaff.staffInfo.lastName,
-        token: loggedInStaff.token,
+        role: loggedInStaff.staffInfo.role,
+        sectorLeader: loggedInStaff.sectorLeader,
+        sector: loggedInStaff.sector,
       });
       router.replace("/");
       setIsLoading(false);
@@ -57,15 +62,15 @@ export default function LoginForm() {
       // @ts-ignore
       switch (error.status) {
         case 401:
+          setIsLoading(false);
           return setError({ message: "Dados inválidos.", show: true });
         default:
+          setIsLoading(false);
           return setError({
-            message: "Algo acontece. Tente novamente.",
+            message: "Algo aconteceu. Tente novamente.",
             show: true,
           });
-          break;
       }
-      setIsLoading(false);
     }
   };
 
@@ -113,7 +118,7 @@ export default function LoginForm() {
       </Button>
 
       {error.show && (
-        <Card className="w-full bg-danger-50 text-danger">
+        <Card className="md:w-1/2 w-full bg-danger-50 text-danger">
           <CardBody className="text-center">
             <p>{error.message}</p>
           </CardBody>
@@ -121,26 +126,4 @@ export default function LoginForm() {
       )}
     </form>
   );
-}
-
-async function sendForm(event: FormEvent) {
-  event.preventDefault();
-  const form = event.target as any;
-  const body = {
-    credential: form[0].value,
-    password: form[1].value,
-  } as any;
-  const jsonBody = JSON.stringify(body);
-
-  try {
-    console.log(body);
-    const response = await fetch("http://localhost:3000/staff/login", {
-      method: "POST",
-      body: body,
-    });
-    console.log(response);
-  } catch (error) {
-    console.error("Error while sending Login Form");
-    console.log(error);
-  }
 }
