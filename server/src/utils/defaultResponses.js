@@ -45,3 +45,9 @@ export function notFound(res) {
     error: { message: "Entry not found" },
   });
 }
+
+export function internalError(res, errorMessage = "An error occurred.") {
+  return res.status(500).json({
+    error: { message: errorMessage },
+  });
+}

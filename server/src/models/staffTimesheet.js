@@ -6,7 +6,7 @@ export async function createTimeRecord(timesheetRecordData) {
     .create({
       data: {
         imageUrl: timesheetRecordData.imageUrl,
-        timeIn: timesheetRecordData.timeIn,
+        timeIn: timesheetRecordData.currentTime,
         staff: {
           connect: {
             id: timesheetRecordData.staffId,
@@ -18,4 +18,26 @@ export async function createTimeRecord(timesheetRecordData) {
       },
     })
     .then((createdRecord) => createdRecord);
+}
+
+export async function updateTimeRecord(lastRecordId, clockOutCurrentTime) {
+  return await prisma.staffTimesheet.update({
+    where: {
+      id: lastRecordId,
+    },
+    data: {
+      timeOut: clockOutCurrentTime,
+    },
+  });
+}
+
+export async function getLastRecord(staffId) {
+  return await prisma.staffTimesheet.findFirst({
+    where: {
+      staffId: staffId,
+    },
+    orderBy: {
+      timeIn: "desc",
+    },
+  });
 }

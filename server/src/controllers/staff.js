@@ -1,4 +1,5 @@
 import {
+  internalError,
   missingBody,
   notFound,
   wrongPasswordOrCredential,
@@ -52,7 +53,7 @@ export async function register(req, res) {
   const credentialExists = await getStaffByCredential(credential);
   if (credentialExists) {
     res.status(409).json({
-      error: { message: "Account with entered Credential already exists" },
+      error: { message: "Account with entered Credential already exists." },
     });
     return;
   }
@@ -66,8 +67,7 @@ export async function register(req, res) {
     lastName: lastName,
     imageURL: imageURL,
   });
-  if (!staff)
-    return res.status(500).json({ error: { message: "An error occurred." } });
+  if (!staff) return internalError(res, "Error while creating the staff.");
 
   const token = jwt.sign(
     { staffCredential: staff.credential },
@@ -88,7 +88,7 @@ export async function getAll(req, res) {
     return res.status(200).json({ staff: allStaff });
   } catch (error) {
     console.error("Error fetching all staff: ", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return internalError(res, "Error while getting all staff.");
   }
 }
 
@@ -96,7 +96,7 @@ export async function getById(req, res) {
   const staffId = req.params.staffId;
 
   if (!parseInt(staffId))
-    return res.status(400).json({ error: "Missing staff ID" });
+    return res.status(400).json({ error: "Missing staff ID." });
 
   try {
     const includeInfo = req.query.includeInfo === "true";
@@ -107,6 +107,6 @@ export async function getById(req, res) {
     return res.status(200).json({ staff: staff });
   } catch (error) {
     console.error("Error fetching user by Id: ", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return internalError("Error while getting user by id.");
   }
 }
