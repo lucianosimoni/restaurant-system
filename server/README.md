@@ -1,18 +1,18 @@
 ## 🪖 Using Prisma ORM
 
-_Creates migration and runs it against database_
+### Creates migration and runs it against database
 
 ```bash
 npx prisma migrate dev --name migration_name
 ```
 
-_Creates it locally but **do not apply** to database_
+### Creates it locally but **do not apply** to database
 
 ```bash
-npx prisma migrate dev --create-only
+npx prisma migrate dev --create-only --name migration_name
 ```
 
-_Reset database_
+### Reset database
 
 ```bash
 npx prisma migrate reset

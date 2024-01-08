@@ -40,13 +40,14 @@ model StaffInfo {
 }
 
 model StaffTimesheet {
-  id       Int       @id @default(autoincrement())
-  imageUrl String
-  timeIn   DateTime
-  timeOut  DateTime?
+  id          Int       @id @default(autoincrement())
+  imageInUrl  String
+  imageOutUrl String?
+  timeIn      DateTime
+  timeOut     DateTime?
   // 🔌 Connections
-  staff    Staff     @relation(fields: [staffId], references: [id])
-  staffId  Int
+  staff       Staff     @relation(fields: [staffId], references: [id])
+  staffId     Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
