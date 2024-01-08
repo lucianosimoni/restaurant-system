@@ -22,6 +22,9 @@ model Staff {
   sector       Sector?          @relation(fields: [sectorId], references: [id]) // Optional Many-to-one relation to Sector
   sectorId     Int? //✈️FK🟡
   timesheet    StaffTimesheet[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model StaffInfo {
@@ -31,6 +34,9 @@ model StaffInfo {
   role      String @default("STAFF")
   // 🔌 Connections
   staff     Staff?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model StaffTimesheet {
@@ -41,6 +47,9 @@ model StaffTimesheet {
   // 🔌 Connections
   staff    Staff?    @relation(fields: [staffId], references: [id])
   staffId  Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Sector {
@@ -55,6 +64,9 @@ model Sector {
   childSectors   Sector[]      @relation("SectorToSector") // Self-relation for nested sectors
   parentSector   Sector?       @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
   parentSectorId Int? //✈️FK🟡
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SectorLeader {
@@ -64,6 +76,9 @@ model SectorLeader {
   staffId  Int    @unique //✈️FK🟡
   sector   Sector @relation(fields: [sectorId], references: [id]) // Mandatory One-to-one relation to Sector
   sectorId Int    @unique //✈️FK🟡
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Categories -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -74,6 +89,9 @@ model Category {
   item   Item[]
   info   CategoryInfo @relation(fields: [infoId], references: [id])
   infoId Int          @unique //✈️FK🟡
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model CategoryInfo {
@@ -82,6 +100,9 @@ model CategoryInfo {
   imageURL    String?
   // 🔌 Connections
   category    Category?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // items -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -93,6 +114,9 @@ model Item {
   category Category[]
   info     ItemInfo   @relation(fields: [infoId], references: [id])
   infoId   Int        @unique //✈️FK🟡
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ItemInfo {
@@ -105,6 +129,9 @@ model ItemInfo {
   unitSystem  UnitSystem @default(UN)
   // 🔌 Connections
   item        Item?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Screens (Pre-defined by Devs) -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -116,6 +143,9 @@ model Screen {
   infoId              Int                  @unique //✈️FK🟡
   sectors             Sector[]
   workstationSettings WorkstationSetting[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ScreenInfo {
@@ -124,6 +154,9 @@ model ScreenInfo {
   path        String  @unique
   // 🔌 Connections
   screen      Screen?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // Workstations -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -136,6 +169,9 @@ model Workstation {
   infoId    Int                @unique //✈️FK🟡
   setting   WorkstationSetting @relation(fields: [settingId], references: [id])
   settingId Int                @unique //✈️FK🟡
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model WorkstationInfo {
@@ -143,6 +179,9 @@ model WorkstationInfo {
   description String?
   // 🔌 Connections
   workstation Workstation?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model WorkstationSetting {
@@ -152,6 +191,9 @@ model WorkstationSetting {
   // 🔌 Connections
   workstation Workstation[]
   screens     Screen[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ENUM Lists -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
