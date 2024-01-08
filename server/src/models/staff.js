@@ -11,6 +11,7 @@ export async function createStaff(staffData) {
           create: {
             firstName: staffData.firstName,
             lastName: staffData.lastName,
+            role: staffData.role,
           },
         },
       },

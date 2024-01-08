@@ -33,3 +33,9 @@ export function missingBearer(res) {
     error: { message: "Bearer token missing" },
   });
 }
+
+export function notFound(res) {
+  return res.status(404).json({
+    error: { message: "Entry not found" },
+  });
+}

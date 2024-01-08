@@ -1,5 +1,6 @@
 import {
   missingBody,
+  notFound,
   wrongPasswordOrCredential,
 } from "../utils/defaultResponses.js";
 import {
@@ -95,14 +96,17 @@ export async function getAll(req, res) {
 
 export async function getById(req, res) {
   const staffId = req.params.staffId;
-  if (!staffId) return res.status(400).json({ error: "Missing staff ID" });
+
+  if (!parseInt(staffId))
+    return res.status(400).json({ error: "Missing staff ID" });
 
   try {
     const includeInfo = req.query.includeInfo === "true";
-    const staff = await getStaffById(Number(staffId), includeInfo);
+    const staff = await getStaffById(parseInt(staffId), includeInfo);
     if (!staff) {
-      return wrongPasswordOrCredential(res);
+      return notFound(res);
     }
+    return res.status(200).json({ staff: staff });
   } catch (error) {
     console.error("Error fetching user by Id: ", error);
     return res.status(500).json({ error: "Internal Server Error" });
