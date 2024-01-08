@@ -34,11 +34,13 @@ model StaffInfo {
 }
 
 model StaffTimesheet {
-  id       Int    @id @default(autoincrement())
+  id       Int       @id @default(autoincrement())
   imageUrl String
+  timeIn   DateTime
+  timeOut  DateTime?
   // 🔌 Connections
-  staff    Staff? @relation(fields: [staffId], references: [id])
-  staffId  Int    @unique
+  staff    Staff?    @relation(fields: [staffId], references: [id])
+  staffId  Int
 }
 
 model Sector {
@@ -64,6 +66,7 @@ model SectorLeader {
   sectorId Int    @unique //✈️FK🟡
 }
 
+// Categories -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 model Category {
   id     Int          @id @default(autoincrement())
   title  String       @unique
@@ -81,6 +84,7 @@ model CategoryInfo {
   category    Category?
 }
 
+// items -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 model Item {
   id       Int        @id @default(autoincrement())
   code     Int        @unique @default(autoincrement())
@@ -150,6 +154,7 @@ model WorkstationSetting {
   screens     Screen[]
 }
 
+// ENUM Lists -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 enum UnitSystem {
   UN
   KG
