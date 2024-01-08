@@ -45,7 +45,7 @@ model StaffTimesheet {
   timeIn   DateTime
   timeOut  DateTime?
   // 🔌 Connections
-  staff    Staff?    @relation(fields: [staffId], references: [id])
+  staff    Staff     @relation(fields: [staffId], references: [id])
   staffId  Int
 
   createdAt DateTime @default(now())

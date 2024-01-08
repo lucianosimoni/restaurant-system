@@ -5,6 +5,7 @@ import cors from "cors";
 
 import authenticate from "./middleware/authenticate.js";
 import staffRouter from "./routers/staff.js";
+import staffTimesheetRouter from "./routers/staffTimesheet.js";
 // import interviewRouter from "./routers/interview.js";
 
 dotenv.config();
@@ -26,6 +27,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/staff", staffRouter);
+app.use("/staff/timesheet", staffTimesheetRouter);
 // app.use("/interview", authenticate, interviewRouter);
 
 app.get("/", (req, res) => {

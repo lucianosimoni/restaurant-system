@@ -66,10 +66,8 @@ export async function register(req, res) {
     lastName: lastName,
     imageURL: imageURL,
   });
-  if (!staff) {
-    res.status(500).json({ error: { message: "An error occurred." } });
-    return;
-  }
+  if (!staff)
+    return res.status(500).json({ error: { message: "An error occurred." } });
 
   const token = jwt.sign(
     { staffCredential: staff.credential },
