@@ -1,4 +1,4 @@
-## 🪖 Using Prisma ORM
+# 🪖 Using Prisma ORM
 
 ### Creates migration and runs it against database
 

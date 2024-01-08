@@ -6,7 +6,7 @@ import {
 import {
   createTimeRecord,
   getLastRecord,
-  updateLastTimeRecord,
+  updateTimeRecord,
 } from "../models/staffTimesheet.js";
 
 export async function autoClock(req, res) {
@@ -16,7 +16,6 @@ export async function autoClock(req, res) {
     return missingBody(res);
   }
 
-  // Verify if in UTC format
   const dateObject = new Date(currentTime);
   if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
     return wrongBody(res);
@@ -25,34 +24,36 @@ export async function autoClock(req, res) {
   // 🔵 Get Last Record
   const lastRecord = await getLastRecord(staffId);
 
-  // 🟢 No Record: CREATE / IN
-  if (!lastRecord) {
-    const clockedInRecord = await createTimeRecord({
+  // 🔴 Last is pending: UPDATE / OUT
+  if (!lastRecord.imageOutUrl) {
+    const clockedOutRecord = await updateTimeRecord({
+      staffTimesheetId: lastRecord.id,
       staffId,
       imageUrl,
       time: currentTime,
     });
-    if (!clockedInRecord) {
-      return internalError(res, "Error while creating timesheet record.");
+    if (!clockedOutRecord) {
+      return internalError(res, "Error while updating timesheet record.");
     }
 
     return res
       .status(201)
-      .json({ autoRecord: { ...clockedInRecord }, clockedIn: true });
+      .json({ autoRecord: { ...clockedOutRecord }, clockedIn: false });
   }
 
-  // 🔴 Found Record: UPDATE / OUT
-  const clockedOutRecord = await updateLastTimeRecord(
-    lastRecord.id,
-    currentTime
-  );
-  if (!clockedOutRecord) {
-    return internalError(res, "Error while updating timesheet record.");
+  // 🟢 Last is filled: CREATE NEW / IN
+  const clockedInRecord = await createTimeRecord({
+    staffId,
+    imageUrl,
+    time: currentTime,
+  });
+  if (!clockedInRecord) {
+    return internalError(res, "Error while creating timesheet record.");
   }
 
   return res
     .status(201)
-    .json({ autoRecord: { ...clockedOutRecord }, clockedIn: false });
+    .json({ autoRecord: { ...clockedInRecord }, clockedIn: true });
 }
 
 export async function clockIn(req, res) {
@@ -87,19 +88,19 @@ export async function clockOut(req, res) {
     return missingBody(res);
   }
 
-  // Verify if in UTC format
   const dateObject = new Date(clockOutTime);
   if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
     return wrongBody(res);
   }
 
-  const clockedInRecord = await createTimeRecord({
+  const clockedInRecord = await updateTimeRecord({
+    staffTimesheetId,
     staffId,
     imageUrl,
     time: clockOutTime,
   });
   if (!clockedInRecord) {
-    return internalError(res, "Error while creating timesheet record.");
+    return internalError(res, "Error while clocking out timesheet record.");
   }
 
   return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
