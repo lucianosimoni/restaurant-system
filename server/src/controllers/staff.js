@@ -2,7 +2,12 @@ import {
   missingBody,
   wrongPasswordOrCredential,
 } from "../utils/defaultResponses.js";
-import { getStaffByCredential, createStaff } from "../models/staff.js";
+import {
+  getStaffByCredential,
+  createStaff,
+  getAllStaff,
+  getStaffById,
+} from "../models/staff.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -75,4 +80,31 @@ export async function register(req, res) {
       token,
     },
   });
+}
+
+export async function getAll(req, res) {
+  try {
+    const includeInfo = req.query.includeInfo === "true";
+    const allStaff = await getAllStaff(includeInfo);
+    return res.status(200).json({ staff: allStaff });
+  } catch (error) {
+    console.error("Error fetching all staff: ", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+}
+
+export async function getById(req, res) {
+  const staffId = req.params.staffId;
+  if (!staffId) return res.status(400).json({ error: "Missing staff ID" });
+
+  try {
+    const includeInfo = req.query.includeInfo === "true";
+    const staff = await getStaffById(Number(staffId), includeInfo);
+    if (!staff) {
+      return wrongPasswordOrCredential(res);
+    }
+  } catch (error) {
+    console.error("Error fetching user by Id: ", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 }
