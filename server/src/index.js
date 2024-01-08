@@ -27,7 +27,7 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/staff", staffRouter);
-app.use("/staff/timesheet", staffTimesheetRouter);
+app.use("/timesheet", staffTimesheetRouter);
 // app.use("/interview", authenticate, interviewRouter);
 
 app.get("/", (req, res) => {

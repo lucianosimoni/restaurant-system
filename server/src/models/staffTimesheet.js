@@ -14,12 +14,8 @@ export async function createTimeRecord(timesheetRecordData) {
         },
       },
       include: {
-        staff: true,
+        staff: false,
       },
     })
-    .then((createdRecord) => {
-      console.log("created recird is:");
-      console.log(createdRecord);
-      return createdRecord;
-    });
+    .then((createdRecord) => createdRecord);
 }

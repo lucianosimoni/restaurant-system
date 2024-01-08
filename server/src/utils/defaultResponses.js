@@ -22,6 +22,12 @@ export function wrongPasswordOrCredential(res) {
   });
 }
 
+export function wrongBody(res) {
+  return res.status(401).json({
+    error: { message: "One or more Body arguments is wrong." },
+  });
+}
+
 export function missingAuth(res) {
   return res.status(401).json({
     error: { message: "Authorization header missing" },
