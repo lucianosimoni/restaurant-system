@@ -17,8 +17,8 @@ model Staff {
   passwordHash String
   // 🔌 Connections
   sectorLeader SectorLeader?
-  staffInfo    StaffInfo     @relation(fields: [staffInfoId], references: [id]) // Mandatory One-to-one relation to StaffInfo
-  staffInfoId  Int           @unique //✈️FK🟡
+  info         StaffInfo     @relation(fields: [infoId], references: [id]) // Mandatory One-to-one relation to StaffInfo
+  infoId       Int           @unique //✈️FK🟡
   sector       Sector?       @relation(fields: [sectorId], references: [id]) // Optional Many-to-one relation to Sector
   sectorId     Int? //✈️FK🟡
 }
@@ -38,7 +38,8 @@ model Sector {
   description    String?
   // 🔌 Connections
   staff          Staff[] // One-to-many relation to Staff
-  screen         Screen[] // Many-to-Many relation to Screen
+  screens        Screen[] // Many-to-Many relation to Screen
+  workstations   Workstation[]
   sectorLeader   SectorLeader?
   childSectors   Sector[]      @relation("SectorToSector") // Self-relation for nested sectors
   parentSector   Sector?       @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
@@ -55,12 +56,12 @@ model SectorLeader {
 }
 
 model Category {
-  id             Int          @id @default(autoincrement())
-  title          String       @unique
+  id     Int          @id @default(autoincrement())
+  title  String       @unique
   // 🔌 Connections
-  item           Item[]
-  categoryInfo   CategoryInfo @relation(fields: [categoryInfoId], references: [id])
-  categoryInfoId Int          @unique //✈️FK🟡
+  item   Item[]
+  info   CategoryInfo @relation(fields: [infoId], references: [id])
+  infoId Int          @unique //✈️FK🟡
 }
 
 model CategoryInfo {
@@ -72,35 +73,36 @@ model CategoryInfo {
 }
 
 model Item {
-  id         Int        @id @default(autoincrement())
-  code       Int        @unique @default(autoincrement())
-  title      String     @unique
+  id       Int        @id @default(autoincrement())
+  code     Int        @unique @default(autoincrement())
+  title    String     @unique
   // 🔌 Connections
-  category   Category[]
-  itemInfo   ItemInfo   @relation(fields: [itemInfoId], references: [id])
-  itemInfoId Int        @unique //✈️FK🟡
+  category Category[]
+  info     ItemInfo   @relation(fields: [infoId], references: [id])
+  infoId   Int        @unique //✈️FK🟡
 }
 
 model ItemInfo {
-  id          Int     @id @default(autoincrement())
+  id          Int        @id @default(autoincrement())
   description String?
   imageURL    String?
   price       Float
   cost        Float
-  type        String  @default("00")
-  unitSystem  String  @default("UN")
+  type        ItemType   @default(EMBALAGEM)
+  unitSystem  UnitSystem @default(UN)
   // 🔌 Connections
   item        Item?
 }
 
 // Screens (Pre-defined by Devs) -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 model Screen {
-  id           Int        @id @default(autoincrement())
-  title        String     @unique
+  id                  Int                  @id @default(autoincrement())
+  title               String               @unique
   // 🔌 Connections
-  screenInfo   ScreenInfo @relation(fields: [screenInfoId], references: [id])
-  screenInfoId Int        @unique
-  sector       Sector[]
+  info                ScreenInfo           @relation(fields: [infoId], references: [id])
+  infoId              Int                  @unique //✈️FK🟡
+  sectors             Sector[]
+  workstationSettings WorkstationSetting[]
 }
 
 model ScreenInfo {
@@ -109,4 +111,45 @@ model ScreenInfo {
   path        String  @unique
   // 🔌 Connections
   screen      Screen?
+}
+
+// Workstations -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+model Workstation {
+  id        Int                @id @default(autoincrement())
+  title     String             @unique
+  // 🔌 Connections
+  sectors   Sector[]
+  info      WorkstationInfo    @relation(fields: [infoId], references: [id])
+  infoId    Int                @unique //✈️FK🟡
+  setting   WorkstationSetting @relation(fields: [settingId], references: [id])
+  settingId Int                @unique //✈️FK🟡
+}
+
+model WorkstationInfo {
+  id          Int          @id @default(autoincrement())
+  description String?
+  // 🔌 Connections
+  workstation Workstation?
+}
+
+model WorkstationSetting {
+  id          Int           @id @default(autoincrement())
+  title       String        @unique // Cash Register, etc
+  description String?
+  // 🔌 Connections
+  workstation Workstation[]
+  screens     Screen[]
+}
+
+enum UnitSystem {
+  UN
+  KG
+}
+
+enum ItemType {
+  REVENDA
+  EMBALAGEM
+  MATERIA_PRIMA
+  PRODUTO_EM_PROCESSO
+  PRODUTO_ACABADO
 }
