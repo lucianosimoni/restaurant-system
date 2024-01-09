@@ -83,7 +83,7 @@ export async function register(req, res) {
 
 export async function getAll(req, res) {
   try {
-    const includeInfo = req.query.includeInfo === "true";
+    const includeInfo = req.query["include-info"] === "true";
     const allStaff = await getAllStaff(includeInfo);
     return res.status(200).json({ staff: allStaff });
   } catch (error) {
@@ -99,7 +99,7 @@ export async function getById(req, res) {
     return res.status(400).json({ error: "Missing staff ID." });
 
   try {
-    const includeInfo = req.query.includeInfo === "true";
+    const includeInfo = req.query["include-info"] === "true";
     const staff = await getStaffById(parseInt(staffId), includeInfo);
     if (!staff) {
       return notFound(res);

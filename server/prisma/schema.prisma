@@ -139,7 +139,9 @@ model ItemInfo {
 model Screen {
   id                  Int                  @id @default(autoincrement())
   title               String               @unique
+  path                String               @unique
   // 🔌 Connections
+  // TODO: Remove the infoId from here, leave it to be included in the model when needed, not always
   info                ScreenInfo           @relation(fields: [infoId], references: [id])
   infoId              Int                  @unique //✈️FK🟡
   sectors             Sector[]
@@ -150,14 +152,12 @@ model Screen {
 }
 
 model ScreenInfo {
-  id          Int     @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   description String?
-  path        String  @unique
   // 🔌 Connections
   screen      Screen?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 // Workstations -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

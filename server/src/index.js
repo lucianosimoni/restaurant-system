@@ -8,6 +8,7 @@ import staffRouter from "./routers/staff.js";
 import staffTimesheetRouter from "./routers/staffTimesheet.js";
 import workstationRouter from "./routers/workstation.js";
 import workstationSettingRouter from "./routers/workstationSetting.js";
+import screenRouter from "./routers/screen.js";
 // import interviewRouter from "./routers/interview.js";
 
 dotenv.config();
@@ -32,6 +33,7 @@ app.use("/staff", staffRouter);
 app.use("/timesheet", staffTimesheetRouter);
 app.use("/workstation", workstationRouter);
 app.use("/workstation-setting", workstationSettingRouter);
+app.use("/screen", screenRouter);
 // app.use("/interview", authenticate, interviewRouter);
 
 app.get("/", (req, res) => {

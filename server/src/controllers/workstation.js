@@ -24,10 +24,9 @@ export async function register(req, res) {
 
   const titleExists = await getWorkstationByTitle(title);
   if (titleExists) {
-    res.status(409).json({
+    return res.status(409).json({
       error: { message: "Workstation with entered Title already exists." },
     });
-    return;
   }
 
   // TODO: check if WorkstationSettingID exists
@@ -58,7 +57,7 @@ export async function register(req, res) {
 
 export async function getAll(req, res) {
   try {
-    const includeInfo = req.query.includeInfo === "true";
+    const includeInfo = req.query["include-info"] === "true";
     const workstations = await getAllWorkstations(includeInfo);
     return res.status(200).json({ workstations: workstations });
   } catch (error) {
@@ -75,7 +74,7 @@ export async function getById(req, res) {
   }
 
   try {
-    const includeInfo = req.query.includeInfo === "true";
+    const includeInfo = req.query["include-info"] === "true";
     const workstation = await getWorkstationById(
       parseInt(workstationId),
       includeInfo

@@ -38,5 +38,8 @@ export async function getWorkstationSettingById(workstationSettingId) {
     where: {
       id: workstationSettingId,
     },
+    include: {
+      screens: true,
+    },
   });
 }
