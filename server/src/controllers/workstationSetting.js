@@ -6,7 +6,7 @@ import {
 import {
   //   createWorkstationSetting,
   getAllWorkstationSettings,
-  //   getWorkstationSettingById,
+  getWorkstationSettingById,
   //   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
 
@@ -45,25 +45,23 @@ export async function getAll(req, res) {
   }
 }
 
-// export async function getById(req, res) {
-//   const workstationId = req.params.workstationId;
+export async function getById(req, res) {
+  const workstationSettingId = req.params.workstationSettingId;
 
-//   if (!parseInt(workstationId)) {
-//     return res.status(400).json({ error: "Missing workstation ID." });
-//   }
+  if (!parseInt(workstationSettingId)) {
+    return res.status(400).json({ error: "Missing workstation setting ID." });
+  }
 
-//   try {
-//     const includeInfo = req.query.includeInfo === "true";
-//     const workstation = await getWorkstationById(
-//       parseInt(workstationId),
-//       includeInfo
-//     );
-//     if (!workstation) {
-//       return notFound(res);
-//     }
-//     return res.status(200).json({ workstation: workstation });
-//   } catch (error) {
-//     console.error("Error fetching workstation by Id: ", error);
-//     return internalError("Error while getting workstation by id.");
-//   }
-// }
+  try {
+    const workstationSetting = await getWorkstationSettingById(
+      parseInt(workstationSettingId)
+    );
+    if (!workstationSetting) {
+      return notFound(res);
+    }
+    return res.status(200).json({ workstationSetting: workstationSetting });
+  } catch (error) {
+    console.error("Error fetching workstation setting by Id: ", error);
+    return internalError("Error while getting workstation setting by id.");
+  }
+}
