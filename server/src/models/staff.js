@@ -5,7 +5,7 @@ export async function createStaff(staffData) {
   return await prisma.staff
     .create({
       data: {
-        credential: staffData.credential,
+        username: staffData.username,
         passwordHash: staffData.passwordHash,
         info: {
           create: {
@@ -42,14 +42,11 @@ export async function getStaffById(staffId, includeInfo = true) {
   }
 }
 
-export async function getStaffByCredential(
-  staffCredential,
-  includeInfo = true
-) {
+export async function getStaffByUsername(staffUsername, includeInfo = true) {
   try {
     const staff = await prisma.staff.findUnique({
       where: {
-        credential: staffCredential,
+        username: staffUsername,
       },
       include: {
         info: includeInfo,

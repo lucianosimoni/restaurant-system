@@ -13,7 +13,7 @@ datasource db {
 
 model Staff {
   id           Int              @id @default(autoincrement())
-  credential   String           @unique
+  username     String           @unique
   passwordHash String
   // 🔌 Connections
   sectorLeader SectorLeader?

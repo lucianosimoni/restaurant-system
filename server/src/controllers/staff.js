@@ -2,10 +2,10 @@ import {
   internalError,
   missingBody,
   notFound,
-  wrongPasswordOrCredential,
+  wrongPasswordOrUsername,
 } from "../utils/defaultResponses.js";
 import {
-  getStaffByCredential,
+  getStaffByUsername,
   createStaff,
   getAllStaff,
   getStaffById,
@@ -16,24 +16,24 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export async function login(req, res) {
-  const { credential, password } = req.body;
-  if (!credential || !password) {
+  const { username, password } = req.body;
+  if (!username || !password) {
     return missingBody(res);
   }
 
-  const staff = await getStaffByCredential(credential);
+  const staff = await getStaffByUsername(username);
   if (!staff) {
-    return wrongPasswordOrCredential(res);
+    return wrongPasswordOrUsername(res);
   }
 
   const isPasswordValid = await bcrypt.compare(password, staff.passwordHash);
   if (!isPasswordValid) {
-    return wrongPasswordOrCredential(res);
+    return wrongPasswordOrUsername(res);
   }
 
   delete staff.passwordHash;
   const token = jwt.sign(
-    { staffCredential: staff.credential },
+    { staffUsername: staff.username },
     process.env.JWT_SECRET_KEY
   );
   const loggedInStaff = {
@@ -44,16 +44,16 @@ export async function login(req, res) {
 }
 
 export async function register(req, res) {
-  const { credential, password, firstName, lastName, imageURL } = req.body;
+  const { username, password, firstName, lastName, imageURL } = req.body;
 
-  if (!credential || !password || !firstName || !lastName || !imageURL) {
+  if (!username || !password || !firstName || !lastName || !imageURL) {
     return missingBody(res);
   }
 
-  const credentialExists = await getStaffByCredential(credential);
-  if (credentialExists) {
+  const usernameExists = await getStaffByUsername(username);
+  if (usernameExists) {
     res.status(409).json({
-      error: { message: "Account with entered Credential already exists." },
+      error: { message: "Account with entered Username already exists." },
     });
     return;
   }
@@ -61,7 +61,7 @@ export async function register(req, res) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const staff = await createStaff({
-    credential: credential,
+    username: username,
     passwordHash: hashedPassword,
     firstName: firstName,
     lastName: lastName,
@@ -70,7 +70,7 @@ export async function register(req, res) {
   if (!staff) return internalError(res, "Error while creating the staff.");
 
   const token = jwt.sign(
-    { staffCredential: staff.credential },
+    { staffUsername: staff.username },
     process.env.JWT_SECRET_KEY
   );
   res.status(201).json({

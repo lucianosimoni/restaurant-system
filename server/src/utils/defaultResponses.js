@@ -16,9 +16,9 @@ export function missingParams(res) {
   });
 }
 
-export function wrongPasswordOrCredential(res) {
+export function wrongPasswordOrUsername(res) {
   return res.status(401).json({
-    error: { message: "Credential or Password is wrong." },
+    error: { message: "Username or Password is wrong." },
   });
 }
 
