@@ -9,6 +9,7 @@ import {
   getWorkstationSettingById,
   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
+import { getScreenById } from "../models/screen.js";
 
 export async function register(req, res) {
   const { title, description, screens } = req.body;
@@ -17,7 +18,22 @@ export async function register(req, res) {
     return missingBody(res);
   }
 
-  // TODO: Check if each screen exists
+  const titleExists = await getWorkstationSettingByTitle(title);
+  if (titleExists) {
+    return res.status(409).json({
+      error: {
+        message: "Workstation Setting with entered Title already exists.",
+      },
+    });
+  }
+
+  // Check if each screen exists
+  const screensChecked = await Promise.all(
+    screens.map(async (screenId) => await getScreenById(screenId))
+  ).then((screensChecked) => screensChecked);
+  if (screensChecked.some((screen) => screen === null)) {
+    return notFound(res, "One or more screens do not exist.");
+  }
 
   const createdWorkstationSetting = await createWorkstationSetting({
     title,

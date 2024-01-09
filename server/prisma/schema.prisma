@@ -54,17 +54,17 @@ model StaffTimesheet {
 }
 
 model Sector {
-  id             Int           @id @default(autoincrement())
-  title          String        @unique
-  description    String?
+  id                  Int                  @id @default(autoincrement())
+  title               String               @unique
+  description         String?
   // 🔌 Connections
-  staff          Staff[] // One-to-many relation to Staff
-  screens        Screen[] // Many-to-Many relation to Screen
-  workstations   Workstation[]
-  sectorLeader   SectorLeader?
-  childSectors   Sector[]      @relation("SectorToSector") // Self-relation for nested sectors
-  parentSector   Sector?       @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
-  parentSectorId Int? //✈️FK🟡
+  staff               Staff[] // One-to-many relation to Staff
+  screens             Screen[] // Many-to-Many relation to Screen
+  workstationSettings WorkstationSetting[]
+  sectorLeader        SectorLeader?
+  childSectors        Sector[]             @relation("SectorToSector") // Self-relation for nested sectors
+  parentSector        Sector?              @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
+  parentSectorId      Int? //✈️FK🟡
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -167,7 +167,6 @@ model Workstation {
   //TODO: Create a stationname for login?
   passwordHash String
   // 🔌 Connections
-  sectors      Sector[]
   info         WorkstationInfo    @relation(fields: [infoId], references: [id])
   infoId       Int                @unique //✈️FK🟡
   setting      WorkstationSetting @relation(fields: [settingId], references: [id])
@@ -195,6 +194,7 @@ model WorkstationSetting {
   // 🔌 Connections
   workstations Workstation[]
   screens      Screen[]
+  sectors      Sector[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

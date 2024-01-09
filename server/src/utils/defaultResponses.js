@@ -40,9 +40,9 @@ export function missingBearer(res) {
   });
 }
 
-export function notFound(res) {
+export function notFound(res, errorMessage = "Entry not found.") {
   return res.status(404).json({
-    error: { message: "Entry not found" },
+    error: { message: errorMessage },
   });
 }
 

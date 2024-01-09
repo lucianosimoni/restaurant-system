@@ -13,21 +13,16 @@ import {
 export async function register(req, res) {
   const { title, path, description } = req.body;
 
-  console.log("verifying title & path");
-
   if (!title || !path) {
     return missingBody(res);
   }
-  console.log("register screen title & path ok");
+
   const titleExists = await getScreenByTitle(title);
   if (titleExists) {
-    console.log("title exists");
-
     return res.status(409).json({
       error: { message: "Screen with entered Title already exists." },
     });
   }
-  console.log("creating screen");
 
   const screen = await createScreen({
     title: title,
@@ -35,8 +30,6 @@ export async function register(req, res) {
     description: description ? description : null,
   });
   if (!screen) return internalError(res, "Error while creating the screen.");
-
-  console.log("returning 201 res with createdScreen");
 
   res.status(201).json({ createdScreen: { ...screen } });
 }
