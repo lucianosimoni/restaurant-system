@@ -20,3 +20,14 @@ export async function getAllWorkstations(includeInfo = true) {
     return null;
   }
 }
+
+export async function getWorkstationById(workstationId, includeInfo = true) {
+  return await prisma.workstation.findUnique({
+    where: {
+      id: workstationId,
+    },
+    include: {
+      info: includeInfo,
+    },
+  });
+}
