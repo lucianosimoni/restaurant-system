@@ -4,36 +4,34 @@ import {
   missingBody,
 } from "../utils/defaultResponses.js";
 import {
-  //   createWorkstationSetting,
+  createWorkstationSetting,
   getAllWorkstationSettings,
   getWorkstationSettingById,
-  //   getWorkstationSettingByTitle,
+  getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
 
-// export async function register(req, res) {
-//   const { staffId, imageUrl, clockInTime } = req.body;
+export async function register(req, res) {
+  const { title, description, screens } = req.body;
 
-//   if (!staffId || !imageUrl || !clockInTime) {
-//     return missingBody(res);
-//   }
+  if (!title) {
+    return missingBody(res);
+  }
 
-//   // Verify if in UTC format
-//   const dateObject = new Date(clockInTime);
-//   if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
-//     return wrongBody(res);
-//   }
+  // TODO: Check if each screen exists
 
-//   const clockedInRecord = await createTimeRecord({
-//     staffId,
-//     imageUrl,
-//     time: clockInTime,
-//   });
-//   if (!clockedInRecord) {
-//     return internalError(res, "Error while creating timesheet record.");
-//   }
+  const createdWorkstationSetting = await createWorkstationSetting({
+    title,
+    description,
+    screens,
+  });
+  if (!createdWorkstationSetting) {
+    return internalError(res, "Error while creating workstation setting.");
+  }
 
-//   return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
-// }
+  return res
+    .status(201)
+    .json({ createdWorkstationSetting: { ...createdWorkstationSetting } });
+}
 
 export async function getAll(req, res) {
   try {

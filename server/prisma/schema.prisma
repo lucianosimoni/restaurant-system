@@ -189,12 +189,12 @@ model WorkstationInfo {
 }
 
 model WorkstationSetting {
-  id          Int           @id @default(autoincrement())
-  title       String        @unique // Cash Register, etc
-  description String?
+  id           Int           @id @default(autoincrement())
+  title        String        @unique // Cash Register, etc
+  description  String?
   // 🔌 Connections
-  workstation Workstation[]
-  screens     Screen[]
+  workstations Workstation[]
+  screens      Screen[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
