@@ -162,14 +162,16 @@ model ScreenInfo {
 
 // Workstations -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 model Workstation {
-  id        Int                @id @default(autoincrement())
-  title     String             @unique
+  id           Int                @id @default(autoincrement())
+  title        String             @unique
+  //TODO: Create a stationname for login?
+  passwordHash String
   // 🔌 Connections
-  sectors   Sector[]
-  info      WorkstationInfo    @relation(fields: [infoId], references: [id])
-  infoId    Int                @unique //✈️FK🟡
-  setting   WorkstationSetting @relation(fields: [settingId], references: [id])
-  settingId Int                @unique //✈️FK🟡
+  sectors      Sector[]
+  info         WorkstationInfo    @relation(fields: [infoId], references: [id])
+  infoId       Int                @unique //✈️FK🟡
+  setting      WorkstationSetting @relation(fields: [settingId], references: [id])
+  settingId    Int                @unique //✈️FK🟡
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
