@@ -1,3 +1,5 @@
+"use client";
+import { useEffect } from "react";
 import AppNavibar from "../components/Navbar";
 import { usePathname, useRouter } from "next/navigation";
 import { getProfile } from "../lib/appLocalStorage";
