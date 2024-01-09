@@ -98,7 +98,7 @@ model Category {
 model CategoryInfo {
   id          Int       @id @default(autoincrement())
   description String?
-  imageURL    String?
+  imageUrl    String?
   // 🔌 Connections
   category    Category?
 
@@ -123,7 +123,7 @@ model Item {
 model ItemInfo {
   id          Int        @id @default(autoincrement())
   description String?
-  imageURL    String?
+  imageUrl    String?
   price       Float
   cost        Float
   type        ItemType   @default(EMBALAGEM)
@@ -180,6 +180,7 @@ model Workstation {
 model WorkstationInfo {
   id          Int          @id @default(autoincrement())
   description String?
+  imageUrl    String?
   // 🔌 Connections
   workstation Workstation?
 

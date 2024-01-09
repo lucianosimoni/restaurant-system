@@ -1,17 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-export async function createStaff(staffData) {
+export async function createStaff(data) {
   return await prisma.staff
     .create({
       data: {
-        username: staffData.username,
-        passwordHash: staffData.passwordHash,
+        username: data.username,
+        passwordHash: data.passwordHash,
         info: {
           create: {
-            firstName: staffData.firstName,
-            lastName: staffData.lastName,
-            role: staffData.role,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            role: data.role,
           },
         },
       },
