@@ -44,9 +44,9 @@ export async function login(req, res) {
 }
 
 export async function register(req, res) {
-  const { username, password, firstName, lastName, imageURL } = req.body;
+  const { username, password, firstName, lastName, imageUrl } = req.body;
 
-  if (!username || !password || !firstName || !lastName || !imageURL) {
+  if (!username || !password || !firstName || !lastName) {
     return missingBody(res);
   }
 
@@ -65,7 +65,7 @@ export async function register(req, res) {
     passwordHash: hashedPassword,
     firstName: firstName,
     lastName: lastName,
-    imageURL: imageURL,
+    imageUrl: imageUrl ? imageUrl : "",
   });
   if (!staff) {
     return internalError(res, "Error while creating the staff.");
