@@ -67,12 +67,11 @@ export async function register(req, res) {
     lastName: lastName,
     imageURL: imageURL,
   });
-  if (!staff) return internalError(res, "Error while creating the staff.");
+  if (!staff) {
+    return internalError(res, "Error while creating the staff.");
+  }
 
-  const token = jwt.sign(
-    { staffUsername: staff.username },
-    process.env.JWT_SECRET_KEY
-  );
+  const token = jwt.sign({ staffId: staff.id }, process.env.JWT_SECRET_KEY);
   res.status(201).json({
     createdStaff: {
       ...staff,
