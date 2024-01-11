@@ -4,6 +4,7 @@ import morgan from "morgan";
 import cors from "cors";
 
 import authenticate from "./middleware/authenticate.js";
+import authRouter from "./routers/auth.js";
 import staffRouter from "./routers/staff.js";
 import staffTimesheetRouter from "./routers/staffTimesheet.js";
 import workstationRouter from "./routers/workstation.js";
@@ -29,11 +30,12 @@ app.use(cors()); // FIXME: Only for Dev purposes!
 app.use(morgan("dev"));
 app.use(express.json());
 
-app.use("/staff", staffRouter);
-app.use("/timesheet", staffTimesheetRouter);
-app.use("/workstation", workstationRouter);
-app.use("/workstation-setting", workstationSettingRouter);
-app.use("/screen", screenRouter);
+app.use("/auth", authRouter);
+app.use("/staff", authenticate, staffRouter);
+app.use("/timesheet", authenticate, staffTimesheetRouter);
+app.use("/workstation", authenticate, workstationRouter);
+app.use("/workstation-setting", authenticate, workstationSettingRouter);
+app.use("/screen", authenticate, screenRouter);
 // app.use("/interview", authenticate, interviewRouter);
 
 app.get("/", (req, res) => {
