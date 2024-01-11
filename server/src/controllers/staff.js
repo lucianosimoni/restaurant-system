@@ -32,10 +32,7 @@ export async function login(req, res) {
   }
 
   delete staff.passwordHash;
-  const token = jwt.sign(
-    { staffUsername: staff.username },
-    process.env.JWT_SECRET_KEY
-  );
+  const token = jwt.sign({ staffId: staff.id }, process.env.JWT_SECRET_KEY);
   const loggedInStaff = {
     ...staff,
     token,
@@ -71,13 +68,7 @@ export async function register(req, res) {
     return internalError(res, "Error while creating the staff.");
   }
 
-  const token = jwt.sign({ staffId: staff.id }, process.env.JWT_SECRET_KEY);
-  res.status(201).json({
-    createdStaff: {
-      ...staff,
-      token,
-    },
-  });
+  res.status(201).json({ createdStaff: { ...staff } });
 }
 
 export async function getAll(req, res) {
