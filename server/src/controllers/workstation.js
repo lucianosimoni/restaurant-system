@@ -44,7 +44,7 @@ export async function register(req, res) {
     return internalError(res, "Error while creating the workstation.");
 
   const token = jwt.sign(
-    { workstationTitle: workstation.title },
+    { workstationId: workstation.id },
     process.env.JWT_SECRET_KEY
   );
   res.status(201).json({
