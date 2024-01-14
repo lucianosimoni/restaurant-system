@@ -24,7 +24,13 @@ export async function createStaff(data) {
     });
 }
 
-export async function getStaffById(staffId, includeInfo = true) {
+export async function getStaffById(
+  staffId,
+  includeInfo = true,
+  includeTimesheet = true,
+  includeSector = true,
+  includeSectorLeader = true
+) {
   try {
     const staff = await prisma.staff.findUnique({
       where: {
@@ -32,6 +38,9 @@ export async function getStaffById(staffId, includeInfo = true) {
       },
       include: {
         info: includeInfo,
+        sector: includeSector,
+        timesheet: includeTimesheet,
+        sectorLeader: includeSectorLeader,
       },
     });
     return staff;
@@ -41,7 +50,13 @@ export async function getStaffById(staffId, includeInfo = true) {
   }
 }
 
-export async function getStaffByUsername(staffUsername, includeInfo = true) {
+export async function getStaffByUsername(
+  staffUsername,
+  includeInfo = true,
+  includeTimesheet = false,
+  includeSector = false,
+  includeSectorLeader = false
+) {
   try {
     const staff = await prisma.staff.findUnique({
       where: {
@@ -49,6 +64,9 @@ export async function getStaffByUsername(staffUsername, includeInfo = true) {
       },
       include: {
         info: includeInfo,
+        sector: includeSector,
+        timesheet: includeTimesheet,
+        sectorLeader: includeSectorLeader,
       },
     });
     return staff;
@@ -58,11 +76,19 @@ export async function getStaffByUsername(staffUsername, includeInfo = true) {
   }
 }
 
-export async function getAllStaff(includeInfo = true) {
+export async function getAllStaff(
+  includeInfo = true,
+  includeTimesheet = false,
+  includeSector = false,
+  includeSectorLeader = false
+) {
   try {
     const allStaff = await prisma.staff.findMany({
       include: {
         info: includeInfo,
+        sector: includeSector,
+        timesheet: includeTimesheet,
+        sectorLeader: includeSectorLeader,
       },
     });
 

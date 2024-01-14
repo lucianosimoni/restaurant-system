@@ -15,10 +15,10 @@ model Staff {
   id           Int              @id @default(autoincrement())
   username     String           @unique
   passwordHash String
+  role         StaffRole        @default(STAFF)
   // 🔌 Connections
   sectorLeader SectorLeader?
-  info         StaffInfo        @relation(fields: [infoId], references: [id]) // Mandatory One-to-one relation to StaffInfo
-  infoId       Int              @unique //✈️FK🟡
+  info         StaffInfo?
   sector       Sector?          @relation(fields: [sectorId], references: [id]) // Optional Many-to-one relation to Sector
   sectorId     Int? //✈️FK🟡
   timesheet    StaffTimesheet[]
@@ -31,9 +31,9 @@ model StaffInfo {
   id        Int    @id @default(autoincrement())
   firstName String
   lastName  String
-  role      String @default("STAFF")
   // 🔌 Connections
-  staff     Staff?
+  staff     Staff  @relation(fields: [staffId], references: [id]) // Mandatory One-to-one relation to StaffInfo
+  staffId   Int    @unique //✈️FK🟡
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -212,4 +212,11 @@ enum ItemType {
   MATERIA_PRIMA
   PRODUTO_EM_PROCESSO
   PRODUTO_ACABADO
+}
+
+enum StaffRole {
+  STAFF
+  SECTOR_LEADER
+  MANAGER
+  OWNER
 }

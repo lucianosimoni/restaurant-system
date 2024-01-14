@@ -32,7 +32,14 @@ export async function login(req, res) {
   }
 
   delete staff.passwordHash;
-  const token = jwt.sign({ staffId: staff.id }, process.env.JWT_SECRET_KEY);
+
+  const token = jwt.sign(
+    {
+      staffId: staff.id,
+      staffRole: staff.role,
+    },
+    process.env.JWT_SECRET_KEY
+  );
   const loggedInStaff = {
     ...staff,
     token,

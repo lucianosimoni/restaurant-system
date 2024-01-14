@@ -4,10 +4,11 @@ import {
   getAll,
   getById,
 } from "../controllers/workstationSetting.js";
+import authenticateStaffRole from "../middleware/authenticateStaffRole.js";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/register", authenticateStaffRole(), async (req, res) => {
   await register(req, res);
 });
 
