@@ -14,13 +14,9 @@ import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 dotenv.config();
 
-export async function register(req, res) {
+export async function create(req, res) {
   const { title, password, workstationSettingId, description, imageUrl } =
     req.body;
-
-  if (!title || !password || !workstationSettingId) {
-    return missingBody(res);
-  }
 
   const titleExists = await getWorkstationByTitle(title);
   if (titleExists) {

@@ -4,14 +4,14 @@ import {
   getAll,
   getById,
 } from "../controllers/workstationSetting.js";
-import { authRole } from "../middleware/authRole.js";
-import { staffRoles as r } from "../utils/types.js";
+import authRole from "../middleware/authRole.js";
+import { staffRoles as role } from "../utils/types.js";
 
 const router = express.Router();
 
 router.post(
   "/register",
-  authRole([r.SECTOR_LEADER, r.MANAGER, r.OWNER]),
+  authRole([role.SECTOR_LEADER, role.MANAGER, role.OWNER]),
   async (req, res) => {
     await register(req, res);
   }

@@ -1,6 +1,6 @@
 import express from "express";
 import { autoClock, clockIn } from "../controllers/staffTimesheet.js";
-import { authRole } from "../middleware/authRole.js";
+import authRole from "../middleware/authRole.js";
 import { staffRoles } from "../utils/types.js";
 
 const router = express.Router();
