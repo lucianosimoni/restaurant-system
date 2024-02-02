@@ -3,7 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 
-import authenticate from "./middleware/authenticate.js";
+import auth from "./middleware/auth.js";
 import authRouter from "./routers/auth.js";
 import staffRouter from "./routers/staff.js";
 import staffTimesheetRouter from "./routers/staffTimesheet.js";
@@ -31,12 +31,12 @@ app.use(morgan("dev"));
 app.use(express.json());
 
 app.use("/auth", authRouter);
-app.use("/staff", authenticate, staffRouter);
-app.use("/timesheet", authenticate, staffTimesheetRouter);
-app.use("/workstation", authenticate, workstationRouter);
-app.use("/workstation-setting", authenticate, workstationSettingRouter);
-app.use("/screen", authenticate, screenRouter);
-// app.use("/interview", authenticate, interviewRouter);
+app.use("/staff", auth, staffRouter);
+app.use("/timesheet", auth, staffTimesheetRouter);
+app.use("/workstation", auth, workstationRouter);
+app.use("/workstation-setting", auth, workstationSettingRouter);
+app.use("/screen", auth, screenRouter);
+// app.use("/interview", auth, interviewRouter);
 
 app.get("/", (req, res) => {
   res.json({ running: true });

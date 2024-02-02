@@ -7,7 +7,7 @@ import {
   //   login as workstationLogin,
   register as workstationRegister,
 } from "../controllers/workstation.js";
-import authenticate from "../middleware/authenticate.js";
+import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.post("/staff/register", async (req, res) => {
 //   await workstationLogin(req, res);
 // });
 
-router.post("/workstation/register", authenticate, async (req, res) => {
+router.post("/workstation/register", auth, async (req, res) => {
   await workstationRegister(req, res);
 });
 
