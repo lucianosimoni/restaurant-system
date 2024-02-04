@@ -1,33 +1,36 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+import { useState } from 'react';
+// import restaurantLogo from '/restaurant.svg'; // at the public folder
+import { Button, SafeArea } from 'antd-mobile';
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div className="bg-pink-400">
+        <SafeArea position="top" />
       </div>
-      <h1>Vite + React + Ant Design</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
+
+      <div className=" h-[100dvh] p-8 flex flex-col justify-center text-center">
+        <div>
+          <h1>Estação de Trabalho</h1>
+          <p>Sabor Gáucho</p>
+        </div>
+
+        <Button
+          color="primary"
+          fill="solid"
+          shape="rounded"
+          className="w-fit"
+          onClick={() => setCount((count) => count + 1)}
+        >
           count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        </Button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      <div className="bg-pink-400">
+        <SafeArea position="bottom" />
+      </div>
     </>
   );
 }
