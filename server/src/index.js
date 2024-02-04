@@ -17,7 +17,7 @@ import swaggerDocument from "../swagger.json" assert { type: "json" };
 dotenv.config();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT;
 
 const whitelist = process.env.WHITELIST.split(",");
 const corsOptions = {
