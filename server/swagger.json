@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "http://api.example.com/"
+      "url": "http://localhost.com/"
     }
   ],
   "paths": {
