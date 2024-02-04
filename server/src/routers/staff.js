@@ -1,7 +1,12 @@
 import express from "express";
-import { login, register, getAll, getById } from "../controllers/staff.js";
+import { getAll, getById } from "../controllers/staff.js";
 
 const router = express.Router();
+
+/*
+Login; Register; Request Register
+are located in the routers/auth.js
+*/
 
 router.get("/", async (req, res) => {
   await getAll(req, res);
