@@ -1,6 +1,6 @@
 import { Button, Input, Skeleton } from "@nextui-org/react";
 
-export default function LoadingLogin() {
+export default function LoadingLoginPage() {
   return (
     <form className="flex flex-col gap-4 w-full items-center">
       <Skeleton className="md:w-1/2 w-full rounded-large">
