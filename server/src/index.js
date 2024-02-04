@@ -10,7 +10,6 @@ import staffTimesheetRouter from "./routers/staffTimesheet.js";
 import workstationRouter from "./routers/workstation.js";
 import workstationSettingRouter from "./routers/workstationSetting.js";
 import screenRouter from "./routers/screen.js";
-// import interviewRouter from "./routers/interview.js";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger.json" assert { type: "json" };
@@ -42,7 +41,6 @@ app.use("/timesheet", auth, staffTimesheetRouter);
 app.use("/workstation", auth, workstationRouter);
 app.use("/workstation-setting", auth, workstationSettingRouter);
 app.use("/screen", auth, screenRouter);
-// app.use("/interview", auth, interviewRouter);
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
