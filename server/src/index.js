@@ -12,6 +12,9 @@ import workstationSettingRouter from "./routers/workstationSetting.js";
 import screenRouter from "./routers/screen.js";
 // import interviewRouter from "./routers/interview.js";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerDocument from "../swagger.json" assert { type: "json" };
+
 dotenv.config();
 
 const app = express();
@@ -23,6 +26,9 @@ const corsOptions = {
     if (whitelist.indexOf(origin) !== -1) callback(null, true);
     else callback(`🔴⚠️ Not allowed by CORS from origin: ${origin}`, false);
   },
+};
+const options = {
+  customCss: ".swagger-ui .topbar { display: none }",
 };
 // app.use(cors(corsOptions));
 app.use(cors()); // FIXME: Only for Dev purposes!
@@ -37,6 +43,8 @@ app.use("/workstation", auth, workstationRouter);
 app.use("/workstation-setting", auth, workstationSettingRouter);
 app.use("/screen", auth, screenRouter);
 // app.use("/interview", auth, interviewRouter);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 app.get("/", (req, res) => {
   res.json({ running: true });

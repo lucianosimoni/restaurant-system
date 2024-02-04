@@ -20,9 +20,13 @@ router.post(
   }
 );
 
-router.get("/", async (req, res) => {
-  await getAll(req, res);
-});
+router.get(
+  "/",
+  authRole([role.SECTOR_LEADER, role.MANAGER, role.OWNER]),
+  async (req, res) => {
+    await getAll(req, res);
+  }
+);
 
 router.get("/:workstationId", async (req, res) => {
   await getById(req, res);
