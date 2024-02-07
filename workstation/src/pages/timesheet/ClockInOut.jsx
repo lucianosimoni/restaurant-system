@@ -2,14 +2,14 @@ import { Link } from 'react-router-dom';
 
 export default function ClockInOut() {
   return (
-    <div>
+    <div className="flex flex-col w-full h-full p-8">
       {/* Header */}
       <section>
-        <h1>Bater ponto</h1>
-
         <Link to={'/'}>
           <button>Tela inicial</button>
         </Link>
+
+        <h1>Bater ponto</h1>
       </section>
 
       <main className="flex flex-col h-full w-full">

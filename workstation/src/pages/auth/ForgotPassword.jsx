@@ -1,21 +1,21 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 export default function ForgotPassword() {
-  const navigate = useNavigate();
-
   const formSubmit = (e) => {
     e.preventDefault();
     console.log('ForgotPass - Form submitted.');
   };
 
   return (
-    <div>
+    <div className="flex flex-col w-full h-full p-8">
       {/* Header */}
       <div>
+        <Link to={'/'}>
+          <button>Tela inicial</button>
+        </Link>
+
         <h1>Esqueci minha senha</h1>
         <p>Redefinir senha através de código enviado ao email.</p>
-
-        <button onClick={() => navigate('/')}>Tela inicial</button>
       </div>
 
       <form onSubmit={formSubmit}>

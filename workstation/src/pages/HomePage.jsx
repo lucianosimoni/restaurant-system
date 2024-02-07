@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom';
 
 export default function HomePage() {
   return (
-    <div>
-      <h1>Tela Principal</h1>
+    <div className="flex flex-col w-full h-full p-8">
+      {/* Header */}
+      <section>
+        <h1>Tela Principal</h1>
+      </section>
 
-      <section className="border-2 border-black">
+      <section className="flex flex-col gap-2">
         <Link to={'/login'}>
           <button>Entrar</button>
         </Link>

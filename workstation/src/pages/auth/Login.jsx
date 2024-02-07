@@ -11,18 +11,25 @@ export default function Login() {
     <div className="flex flex-col w-full h-full p-8">
       {/* Header */}
       <section>
-        <h1>Estação de Trabalho</h1>
-        <p>Entrar para configurar Estação</p>
-
         <Link to={'/'}>
           <button>Tela Inicial</button>
         </Link>
+
+        <h1>Estação de Trabalho</h1>
+        <p>Entrar para configurar Estação</p>
       </section>
 
       <section>
-        <form onSubmit={formSubmit} className="flex flex-col gap-4 border-4 border-pink-400">
-          <input placeholder="Email" type="email" />
-          <input placeholder="Senha" type="password" />
+        <form onSubmit={formSubmit} className="flex flex-col gap-2">
+          <section className="flex flex-col">
+            <label htmlFor="em">Email</label>
+            <input id="em" placeholder="fulano@saborgaucho.com" type="email" required />
+          </section>
+          <section className="flex flex-col">
+            <label htmlFor="newPass">Senha</label>
+            <input id="newPass" placeholder="••••••" type="password" required />
+          </section>
+          <button type="submit">Entrar</button>
         </form>
       </section>
     </div>
