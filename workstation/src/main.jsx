@@ -5,11 +5,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import Home from './pages/Home.jsx';
 import Login from './pages/auth/Login.jsx';
-import RequestAccess from './pages/auth/RequestAccess.jsx';
-import ForgotPassword from './pages/auth/ForgotPassword.jsx';
 import ClockInOut from './pages/timesheet/ClockInOut.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import Settings from './pages/settings/Settings.jsx';
+import InitialSettings from './pages/auth/InitialSettings.jsx';
 
 const router = createBrowserRouter([
   {
@@ -18,8 +17,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   { path: '/login', element: <Login /> },
-  { path: '/forgot-password', element: <ForgotPassword /> },
-  { path: '/request-access', element: <RequestAccess /> },
+  { path: '/initial-settings', element: <InitialSettings /> },
   { path: '/clock-in-out', element: <ClockInOut /> },
   { path: '/settings', element: <Settings /> },
 ]);

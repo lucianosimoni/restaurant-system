@@ -4,22 +4,23 @@ export default function Home() {
   return (
     <div className="flex flex-col w-full h-full p-8">
       {/* Header */}
-      <section>
+      <header>
         <h1>Tela Principal</h1>
-      </section>
+      </header>
 
-      <section className="flex flex-col gap-2">
+      <main className="flex flex-col gap-2">
         <Link to={'/login'}>
           <button>Entrar</button>
         </Link>
-        <Link to={'/request-access'}>
-          <button>Pedir Acesso</button>
-        </Link>
         {/* TODO: Remove because this is a protected route */}
+        <p>Dev*</p>
         <Link to={'/settings'}>
           <button>Configurações da Estação (após login)</button>
         </Link>
-      </section>
+        <Link to={'/initial-settings'}>
+          <button>Initial Settings (após login)</button>
+        </Link>
+      </main>
     </div>
   );
 }

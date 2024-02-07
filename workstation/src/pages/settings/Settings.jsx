@@ -4,14 +4,14 @@ export default function Settings() {
   return (
     <div className="flex flex-col w-full h-full p-8">
       {/* Header */}
-      <section>
+      <header>
         <Link to={'/'}>
           <button>Deslogar *TODO</button>
         </Link>
 
         <h1>Configurações da Estação</h1>
         <p>Define que tipo de estação será esta.</p>
-      </section>
+      </header>
 
       <main>
         <section className="flex flex-col">

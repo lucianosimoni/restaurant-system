@@ -7,7 +7,7 @@ export default function ErrorPage() {
   return (
     <div className="flex flex-col h-full justify-center items-center">
       {/* Header */}
-      <section>
+      <header>
         <h1>Algo deu errado.</h1>
         <p>Tente novamente.</p>
         <p>{error.status}</p>
@@ -16,7 +16,7 @@ export default function ErrorPage() {
         <Link to={'/'}>
           <button>Tela inicial</button>
         </Link>
-      </section>
+      </header>
     </div>
   );
 }
