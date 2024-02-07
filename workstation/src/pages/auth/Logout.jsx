@@ -1,24 +1,24 @@
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function Logout() {
   const navigate = useNavigate();
 
   const formSubmit = (e) => {
     e.preventDefault();
 
     console.log('Login - Form Submitted');
-    navigate('/initial-settings');
+    navigate('/');
   };
 
   return (
-    <div className="flex flex-col w-full h-full p-8">
+    <div className="flex flex-col h-full w-full p-8">
       <header>
         <Link to={'/'}>
           <button>Tela Inicial</button>
         </Link>
 
-        <h1>Estação de Trabalho</h1>
-        <p>Entrar para configurar Estação</p>
+        <h1>Saindo da Estação</h1>
+        <p>Confirme sua identidade antes de sair.</p>
       </header>
 
       <main>

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 export default function Home() {
   return (
     <div className="flex flex-col w-full h-full p-8">
-      {/* Header */}
       <header>
         <h1>Tela Principal</h1>
       </header>
@@ -14,6 +13,9 @@ export default function Home() {
         </Link>
         {/* TODO: Remove because this is a protected route */}
         <p>Dev*</p>
+        <Link to={'/logout'}>
+          <button>Sair</button>
+        </Link>
         <Link to={'/settings'}>
           <button>Configurações da Estação (após login)</button>
         </Link>

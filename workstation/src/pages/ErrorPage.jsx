@@ -6,7 +6,6 @@ export default function ErrorPage() {
 
   return (
     <div className="flex flex-col h-full justify-center items-center">
-      {/* Header */}
       <header>
         <h1>Algo deu errado.</h1>
         <p>Tente novamente.</p>
