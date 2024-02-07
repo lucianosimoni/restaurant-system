@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import HomePage from './pages/HomePage.jsx';
+import Home from './pages/Home.jsx';
 import Login from './pages/auth/Login.jsx';
 import RequestAccess from './pages/auth/RequestAccess.jsx';
 import ForgotPassword from './pages/auth/ForgotPassword.jsx';
@@ -13,7 +13,7 @@ import ErrorPage from './pages/ErrorPage.jsx';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <HomePage />,
+    element: <Home />,
     errorElement: <ErrorPage />,
   },
   { path: '/login', element: <Login /> },
