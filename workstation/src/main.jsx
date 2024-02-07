@@ -9,6 +9,7 @@ import RequestAccess from './pages/auth/RequestAccess.jsx';
 import ForgotPassword from './pages/auth/ForgotPassword.jsx';
 import ClockInOut from './pages/timesheet/ClockInOut.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
+import Settings from './pages/settings/Settings.jsx';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/request-access', element: <RequestAccess /> },
   { path: '/clock-in-out', element: <ClockInOut /> },
+  { path: '/settings', element: <Settings /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -15,6 +15,10 @@ export default function Home() {
         <Link to={'/request-access'}>
           <button>Pedir Acesso</button>
         </Link>
+        {/* TODO: Remove because this is a protected route */}
+        <Link to={'/settings'}>
+          <button>Configurações da Estação (após login)</button>
+        </Link>
       </section>
     </div>
   );
