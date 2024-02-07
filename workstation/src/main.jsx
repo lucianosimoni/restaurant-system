@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import ErrorPage from './ErrorPage.jsx';
 import HomePage from './pages/HomePage.jsx';
 import Login from './pages/auth/Login.jsx';
+import RequestAccess from './pages/auth/RequestAccess.jsx';
+import ForgotPassword from './pages/auth/ForgotPassword.jsx';
+import ClockInOut from './pages/timesheet/ClockInOut.jsx';
+import ErrorPage from './pages/ErrorPage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +17,9 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   { path: '/login', element: <Login /> },
+  { path: '/forgot-password', element: <ForgotPassword /> },
+  { path: '/request-access', element: <RequestAccess /> },
+  { path: '/clock-in-out', element: <ClockInOut /> },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
