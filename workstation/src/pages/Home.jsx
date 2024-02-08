@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
 
 export default function Home() {
   return (
@@ -9,22 +10,22 @@ export default function Home() {
 
       <main className="flex flex-col gap-2">
         <Link to={'/login'}>
-          <button>Entrar</button>
+          <Button variant="contained">Entrar</Button>
         </Link>
         {/* TODO: Remove because this is a protected route */}
         <p>Dev*</p>
         <Link to={'/logout'}>
-          <button>Sair</button>
+          <Button variant="outlined">Sair</Button>
         </Link>
         <Link to={'/settings'}>
-          <button>Configurações da Estação (após login)</button>
+          <Button variant="outlined">Configurações da Estação (após login)</Button>
         </Link>
         <Link to={'/initial-settings'}>
-          <button>Initial Settings (após login)</button>
+          <Button variant="text">Initial Settings (após login)</Button>
         </Link>
         <p>Dev* Bater Ponto</p>
         <Link to={'/clock-in-out'}>
-          <button>Bater ponto (apos login)</button>
+          <Button variant="text">Bater ponto (apos login)</Button>
         </Link>
       </main>
     </div>

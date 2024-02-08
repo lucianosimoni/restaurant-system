@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom';
+import CompSelect from '../../components/CompSelect';
+import { Button } from '@mui/material';
 
 export default function InitialSettings() {
   const formSubmit = (e) => {
@@ -32,15 +34,20 @@ export default function InitialSettings() {
             <label htmlFor="img">Icone da Estação</label>
             <input id="img" type="file" accept=".jpg, .jpeg, .png" />
           </section>
-          <section className="flex flex-col">
-            <label htmlFor="stationT">Configuração da Estação</label>
-            <select id="stationT">
-              <option value={'timesheet'}>Bater ponto</option>
-              <option value={'stock-manager'}>Gerenciador de Estoque</option>
-              <option value={'meat-treat'}>Tratar carnes</option>
-            </select>
-          </section>
-          <button type="submit">Salvar</button>
+
+          <CompSelect
+            title="Configuração da Estação"
+            items={[
+              { t: 'Bater Ponto', v: 'bater-ponto' },
+              { t: 'Gerenciador de Estoque', v: 'gerenciador-estoque' },
+              { t: 'Tratar Carnes', v: 'tratar-carnes' },
+            ]}
+            variant="filled"
+          />
+
+          <Button variant="contained" type="submit">
+            Salvar
+          </Button>
         </form>
       </main>
     </div>
