@@ -1,9 +1,13 @@
-import create from 'zustand';
-import persist from 'zustand/middleware';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-const useAuthStore = create(
+export const useAuthStore = create(
   persist(
     (set, get) => ({
+      firstName: 'Luciano',
+      lastName: 'Simoni',
+      updateFirstName: (newFirstName) => set(() => ({ firstName: newFirstName })),
+      updateLastName: (newLastName) => set(() => ({ lastName: newLastName })),
       bears: 0,
       addABear: () => set({ bears: get().bears + 1 }),
     }),
@@ -12,5 +16,3 @@ const useAuthStore = create(
     },
   ),
 );
-
-export default useAuthStore;

@@ -1,11 +1,15 @@
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
+import { useAuthStore } from '../store/authStore';
 
 export default function Home() {
+  const firstName = useAuthStore((state) => state.firstName);
+
   return (
     <div className="flex flex-col w-full h-full p-8">
       <header>
         <h1>Tela Principal</h1>
+        <h2>{firstName}</h2>
       </header>
 
       <main className="flex flex-col gap-2">
