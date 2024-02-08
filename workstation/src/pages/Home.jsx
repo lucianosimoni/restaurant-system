@@ -4,6 +4,11 @@ import { useAuthStore } from '../store/authStore';
 
 export default function Home() {
   const firstName = useAuthStore((state) => state.firstName);
+  const logout = useAuthStore((state) => state.logout);
+
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <div className="flex flex-col w-full h-full p-8">
@@ -18,9 +23,9 @@ export default function Home() {
         </Link>
         {/* TODO: Remove because this is a protected route */}
         <p>Dev*</p>
-        <Link to={'/logout'}>
-          <Button variant="outlined">Sair</Button>
-        </Link>
+        <Button variant="outlined" onClick={handleLogout}>
+          Sair
+        </Button>
         <Link to={'/settings'}>
           <Button variant="outlined">Configurações da Estação (após login)</Button>
         </Link>
