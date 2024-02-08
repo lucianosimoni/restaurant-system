@@ -22,6 +22,10 @@ export default function Home() {
         <Link to={'/initial-settings'}>
           <button>Initial Settings (após login)</button>
         </Link>
+        <p>Dev* Bater Ponto</p>
+        <Link to={'/clock-in-out'}>
+          <button>Bater ponto (apos login)</button>
+        </Link>
       </main>
     </div>
   );
