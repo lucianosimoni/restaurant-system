@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
+import Root from './pages/Root.jsx';
 import Home from './pages/Home.jsx';
 import Login from './pages/auth/Login.jsx';
 import ClockInOut from './pages/timesheet/ClockInOut.jsx';
@@ -16,12 +17,16 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <div className="h-[100dvh]">
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} errorElement={<ErrorPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/initial-settings" element={<InitialSettings />} />
-          <Route path="/clock-in-out" element={<ClockInOut />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/" element={<Root />}>
+            <Route path="/" element={<Home />} />
+
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/initial-settings" element={<InitialSettings />} />
+            <Route path="/clock-in-out" element={<ClockInOut />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Router>
     </div>

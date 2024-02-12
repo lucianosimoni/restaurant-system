@@ -1,21 +1,20 @@
-import { Link, useRouteError } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 export default function ErrorPage() {
-  const error = useRouteError();
-  console.error(error);
-
   return (
-    <div className="flex flex-col h-full justify-center items-center">
-      <header>
-        <h1>Algo deu errado.</h1>
-        <p>Tente novamente.</p>
-        <p>{error.status}</p>
-        <p className="italic">{error.statusText || error.message}</p>
+    <div className="flex flex-col h-full justify-center items-center gap-8">
+      <div>
+        <Typography variant="h1">404</Typography>
+        <Typography variant="subtitle1">Página não encontrada.</Typography>
+      </div>
 
-        <Link to={'/'}>
-          <button>Tela inicial</button>
-        </Link>
-      </header>
+      <Link to={'/'}>
+        <Button variant="contained" color="primary" size="large">
+          Voltar para Tela Inicial
+        </Button>
+      </Link>
     </div>
   );
 }

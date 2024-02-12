@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
-import Button from '@mui/material/Button';
 import { useStaffStore } from '../store/staffStore';
+
+import Button from '@mui/material/Button';
 
 export default function Home() {
   const staff = useStaffStore((state) => state);

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { wrongPasswordOrUsername } from '../../utils/errorResponses.js';
+import { useStaffStore } from '../../store/staffStore.js';
 
 import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
@@ -9,7 +10,6 @@ import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Grow from '@mui/material/Grow';
 import Typography from '@mui/material/Typography';
-import { useStaffStore } from '../../store/staffStore.js';
 
 export default function Login() {
   const [waiting, setWaiting] = useState(false);
@@ -31,7 +31,6 @@ export default function Login() {
         throw new Error('Response Status code is not 200');
       }
       const { loggedInStaff } = res.data;
-      console.log(loggedInStaff);
       staffLogin(loggedInStaff);
       navigate('/initial-settings');
     } catch (err) {
@@ -52,10 +51,6 @@ export default function Login() {
     <div className="flex flex-col w-full h-full p-8">
       <Container fixed>
         <header>
-          <Link to={'/'}>
-            <button>Tela Inicial</button>
-          </Link>
-
           <Typography variant="h3">Estação de Trabalho</Typography>
           <Typography variant="h6">Entrar para configurar Estação</Typography>
           <Typography variant="body1">{staff.username}</Typography>
