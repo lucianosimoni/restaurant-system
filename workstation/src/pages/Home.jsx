@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import { useAuthStore } from '../store/authStore';
 
 export default function Home() {
-  const firstName = useAuthStore((state) => state.firstName);
+  const staff = useAuthStore((state) => state);
   const logout = useAuthStore((state) => state.logout);
 
   const handleLogout = () => {
@@ -14,7 +14,13 @@ export default function Home() {
     <div className="flex flex-col w-full h-full p-8">
       <header>
         <h1>Tela Principal</h1>
-        <h2>{firstName}</h2>
+        {staff.isAuthenticated ? (
+          <h2>
+            Autenticado como: {staff.info.firstName} {staff.info.lastName}
+          </h2>
+        ) : (
+          <h2>Sem login.</h2>
+        )}
       </header>
 
       <main className="flex flex-col gap-2">
