@@ -33,7 +33,7 @@ const methods = (set, get) => ({
   updateLastName: (newLastName) => set((state) => ({ ...state, info: { ...state.info, lastName: newLastName } })),
 });
 
-export const useAuthStore = create(
+export const useStaffStore = create(
   persist(
     (set, get) => ({
       isAuthenticated: false,

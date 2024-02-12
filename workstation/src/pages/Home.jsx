@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
-import { useAuthStore } from '../store/authStore';
+import { useStaffStore } from '../store/staffStore';
 
 export default function Home() {
-  const staff = useAuthStore((state) => state);
-  const logout = useAuthStore((state) => state.logout);
+  const staff = useStaffStore((state) => state);
+  const logout = useStaffStore((state) => state.logout);
 
   const handleLogout = () => {
     logout();

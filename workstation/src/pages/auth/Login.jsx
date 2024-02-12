@@ -9,13 +9,13 @@ import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Grow from '@mui/material/Grow';
 import Typography from '@mui/material/Typography';
-import { useAuthStore } from '../../store/authStore.js';
+import { useStaffStore } from '../../store/staffStore.js';
 
 export default function Login() {
   const [waiting, setWaiting] = useState(false);
   const [wrongCredentials, setWrongCredentials] = useState(false);
-  const staffLogin = useAuthStore((state) => state.login);
-  const staff = useAuthStore((state) => state);
+  const staffLogin = useStaffStore((state) => state.login);
+  const staff = useStaffStore((state) => state);
   const navigate = useNavigate();
 
   const formSubmit = async (e) => {
@@ -33,6 +33,7 @@ export default function Login() {
       const { loggedInStaff } = res.data;
       console.log(loggedInStaff);
       staffLogin(loggedInStaff);
+      navigate('/initial-settings');
     } catch (err) {
       setWrongCredentials(true);
       switch (err.response.status) {
@@ -45,7 +46,6 @@ export default function Login() {
       }
     }
     setWaiting(false);
-    // navigate('/initial-settings');
   };
 
   return (
