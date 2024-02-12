@@ -12,7 +12,12 @@ import { Link, Outlet } from 'react-router-dom';
 import { Menu, MenuItem } from '@mui/material';
 import { useState } from 'react';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = [
+  { title: 'Início', path: '/' },
+  { title: 'Configurações', path: '/settings' },
+  { title: 'Configurações Iniciais', path: '/initial-settings' },
+  { title: 'Sair', path: '/logout' },
+];
 
 export default function Root() {
   const staff = useStaffStore((state) => state);
@@ -62,9 +67,11 @@ export default function Root() {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleClose}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </MenuItem>
+                  <Link key={page.title} to={page.path} className="no-underline text-black">
+                    <MenuItem onClick={handleClose}>
+                      <Typography textAlign="center">{page.title}</Typography>
+                    </MenuItem>
+                  </Link>
                 ))}
               </Menu>
             </Box>
