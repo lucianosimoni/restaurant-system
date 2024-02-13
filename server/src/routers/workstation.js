@@ -6,15 +6,15 @@ import {
   update,
   remove,
 } from "../controllers/workstation.js";
-import authRole from "../middleware/authRole.js";
+import { authRole } from "../middleware/auth.js";
 import validateBody from "../middleware/validateBody.js";
-import { staffRoles as role } from "../utils/types.js";
+import { GroupedRoles } from "../utils/types.js";
 
 const router = express.Router();
 
 router.post(
   "/",
-  authRole([role.SECTOR_LEADER, role.MANAGER, role.OWNER]),
+  authRole([...GroupedRoles.ALL_BUT_STAFF]),
   validateBody(["title", "password", "workstationSettingId"]),
   async (req, res) => {
     try {
@@ -26,13 +26,9 @@ router.post(
   }
 );
 
-router.get(
-  "/",
-  authRole([role.SECTOR_LEADER, role.MANAGER, role.OWNER]),
-  async (req, res) => {
-    await getAll(req, res);
-  }
-);
+router.get("/", authRole([...GroupedRoles.ALL_BUT_STAFF]), async (req, res) => {
+  await getAll(req, res);
+});
 
 router.get("/:workstationId", async (req, res) => {
   await getById(req, res);
@@ -40,7 +36,7 @@ router.get("/:workstationId", async (req, res) => {
 
 router.put(
   "/:workstationId",
-  authRole([role.SECTOR_LEADER, role.MANAGER, role.OWNER]),
+  authRole([...GroupedRoles.ALL_BUT_STAFF]),
   async (req, res) => {
     try {
       await update(req, res);
@@ -53,7 +49,7 @@ router.put(
 
 router.delete(
   "/:workstationId",
-  authRole([role.SECTOR_LEADER, role.MANAGER, role.OWNER]),
+  authRole([...GroupedRoles.ALL_BUT_STAFF]),
   async (req, res) => {
     try {
       await remove(req, res);
