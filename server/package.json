@@ -6,7 +6,7 @@
   "main": "/src/main.js",
   "scripts": {
     "prod": "node ./src/main.js",
-    "dev": "nodemon ./src/main.js"
+    "dev": "nodemon -r dotenv/config ./src/main.js"
   },
   "author": "Luciano Simoni",
   "license": "ISC",
