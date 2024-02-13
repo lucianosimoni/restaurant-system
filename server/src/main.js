@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import compression from "compression";
 
 import auth from "./middleware/auth.js";
 import authRouter from "./routers/auth.js";
@@ -20,18 +21,14 @@ const app = express();
 const port = process.env.PORT;
 
 const whitelist = process.env.WHITELIST.split(",");
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (whitelist.indexOf(origin) !== -1) callback(null, true);
-    else callback(`🔴⚠️ Not allowed by CORS from origin: ${origin}`, false);
-  },
-};
-const options = {
-  customCss: ".swagger-ui .topbar { display: none }",
-};
-// app.use(cors(corsOptions));
-app.use(cors()); // FIXME: Only for Dev purposes!
 
+app.use(compression());
+// app.use(cors({
+// origin: (origin, callback) => {
+//   if (whitelist.indexOf(origin) !== -1) callback(null, true);
+//   else callback(`🔴⚠️ Not allowed by CORS from origin: ${origin}`, false);
+// }));
+app.use(cors()); // FIXME: Only for Dev purposes!
 app.use(morgan("dev"));
 app.use(express.json());
 
@@ -42,7 +39,13 @@ app.use("/workstation", auth, workstationRouter);
 app.use("/workstation-setting", auth, workstationSettingRouter);
 app.use("/screen", auth, screenRouter);
 
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
+app.use(
+  "/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    customCss: ".swagger-ui .topbar { display: none }",
+  })
+);
 
 app.get("/", (req, res) => {
   res.json({ running: true });
