@@ -26,7 +26,7 @@ export default function Login() {
     const password = e.target.password.value;
 
     try {
-      const res = await axios.post('http://localhost:4000/auth/staff/login', { username, password });
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/staff/login`, { username, password });
       if (res.status != 200) {
         throw new Error('Response Status code is not 200');
       }
