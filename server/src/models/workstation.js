@@ -2,48 +2,35 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export async function createWorkstation(data) {
-  return await prisma.workstation
-    .create({
-      data: {
-        title: data.title,
-        passwordHash: data.passwordHash,
-        info: {
-          create: {
-            description: data.description,
-            imageUrl: data.imageUrl,
-          },
-        },
-        setting: {
-          connect: {
-            id: data.workstationSettingId,
-          },
+  return await prisma.workstation.create({
+    data: {
+      title: data.title,
+      info: {
+        create: {
+          description: data.description,
+          imageUrl: data.imageUrl,
         },
       },
-      include: {
-        info: true,
-        setting: true,
-        sectors: true,
+      setting: {
+        connect: {
+          id: data.workstationSettingId,
+        },
       },
-    })
-    .then((createdWorkstation) => {
-      delete createdWorkstation.passwordHash;
-      return createdWorkstation;
-    });
+    },
+    include: {
+      info: true,
+      setting: true,
+      sectors: true,
+    },
+  });
 }
 
 export async function getAllWorkstations(includeInfo = true) {
-  return await prisma.workstation
-    .findMany({
-      include: {
-        info: includeInfo,
-      },
-    })
-    .then((workstations) => {
-      return workstations.map((workstation) => {
-        const { passwordHash, ...sanitizedData } = workstation;
-        return sanitizedData;
-      });
-    });
+  return await prisma.workstation.findMany({
+    include: {
+      info: includeInfo,
+    },
+  });
 }
 
 export async function getWorkstationByTitle(
@@ -67,6 +54,41 @@ export async function getWorkstationById(workstationId, includeInfo = true) {
     },
     include: {
       info: includeInfo,
+    },
+  });
+}
+
+export async function updateWorkstation(workstationId, data) {
+  return await prisma.workstation.update({
+    where: {
+      id: workstationId,
+    },
+    data: {
+      title: data.title,
+      info: {
+        update: {
+          description: data.description,
+          imageUrl: data.imageUrl,
+        },
+      },
+      setting: {
+        connect: {
+          id: data.workstationSettingId,
+        },
+      },
+    },
+    include: {
+      info: true,
+      setting: true,
+      sectors: true,
+    },
+  });
+}
+
+export async function deleteWorkstation(workstationId) {
+  return await prisma.workstation.delete({
+    where: {
+      id: workstationId,
     },
   });
 }

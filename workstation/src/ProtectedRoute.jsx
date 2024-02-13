@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Navigate } from 'react-router-dom';
-import { useStaffStore } from '../store/staffStore';
+import { useStaffStore } from './store/staffStore';
 
 /**
  * Authenticates the Route. Redirects the user to a given path or renders the Element.

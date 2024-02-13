@@ -8,7 +8,7 @@ import ErrorPage from './pages/ErrorPage.jsx';
 import Settings from './pages/settings/Settings.jsx';
 import InitialSettings from './pages/auth/InitialSettings.jsx';
 import Logout from './pages/auth/Logout.jsx';
-import ProtectedRoute from './utils/ProtectedRoute.jsx';
+import ProtectedRoute from './ProtectedRoute.jsx';
 
 export default function AppRoutes() {
   return (

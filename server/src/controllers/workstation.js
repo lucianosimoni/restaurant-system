@@ -8,6 +8,7 @@ import {
   getAllWorkstations,
   getWorkstationById,
   getWorkstationByTitle,
+  deleteWorkstation,
 } from "../models/workstation.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -82,5 +83,45 @@ export async function getById(req, res) {
   } catch (error) {
     console.error("Error fetching workstation by Id: ", error);
     return internalError("Error while getting workstation by id.");
+  }
+}
+
+export async function update(req, res) {
+  const workstationId = req.params.workstationId;
+  const { title, description, imageUrl, workstationSettingId } = req.body;
+
+  try {
+    const updatedWorkstation = await updateWorkstation(workstationId, {
+      title,
+      description,
+      imageUrl,
+      workstationSettingId,
+    });
+
+    if (!updatedWorkstation) {
+      return notFound(res);
+    }
+
+    res.status(200).json({ updatedWorkstation });
+  } catch (error) {
+    console.error("Error updating workstation: ", error);
+    return internalError(res, "Error while updating workstation.");
+  }
+}
+
+export async function remove(req, res) {
+  const workstationId = req.params.workstationId;
+
+  try {
+    const deletedWorkstation = await deleteWorkstation(workstationId);
+
+    if (!deletedWorkstation) {
+      return notFound(res);
+    }
+
+    res.status(204).end();
+  } catch (error) {
+    console.error("Error deleting workstation: ", error);
+    return internalError(res, "Error while deleting workstation.");
   }
 }

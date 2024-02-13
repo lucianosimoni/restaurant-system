@@ -103,3 +103,41 @@ export async function getAllStaff(
     return null;
   }
 }
+
+export async function updateStaffById(staffId, data) {
+  try {
+    const updatedStaff = await prisma.staff.update({
+      where: { id: staffId },
+      data: {
+        username: data.username,
+        passwordHash: data.passwordHash,
+        info: {
+          update: {
+            firstName: data.firstName,
+            lastName: data.lastName,
+          },
+        },
+      },
+      include: {
+        info: true,
+      },
+    });
+    delete updatedStaff.passwordHash;
+    return updatedStaff;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+export async function deleteStaffById(staffId) {
+  try {
+    const deletedStaff = await prisma.staff.delete({
+      where: { id: staffId },
+    });
+    return deletedStaff;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
