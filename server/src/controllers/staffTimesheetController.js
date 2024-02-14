@@ -9,7 +9,7 @@ import {
   wrongBody,
 } from "../utils/defaultResponses.js";
 
-export async function autoClock(req, res) {
+const autoClock = async (req, res) => {
   const { staffId, imageUrl, currentTime } = req.body;
 
   if (!staffId || !imageUrl || !currentTime) {
@@ -54,9 +54,9 @@ export async function autoClock(req, res) {
   return res
     .status(201)
     .json({ autoRecord: { ...clockedInRecord }, clockedIn: true });
-}
+};
 
-export async function clockIn(req, res) {
+const clockIn = async (req, res) => {
   const { staffId, imageUrl, clockInTime } = req.body;
 
   if (!staffId || !imageUrl || !clockInTime) {
@@ -79,9 +79,9 @@ export async function clockIn(req, res) {
   }
 
   return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
-}
+};
 
-export async function clockOut(req, res) {
+const clockOut = async (req, res) => {
   const { staffTimesheetId, staffId, imageUrl, clockOutTime } = req.body;
 
   if (!staffTimesheetId || !staffId || !imageUrl || !clockOutTime) {
@@ -104,4 +104,6 @@ export async function clockOut(req, res) {
   }
 
   return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
-}
+};
+
+export const StaffTimesheetController = { autoClock, clockIn, clockOut };

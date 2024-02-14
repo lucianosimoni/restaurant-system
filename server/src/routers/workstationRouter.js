@@ -1,50 +1,54 @@
 import express from "express";
-import {
-  getAll,
-  getById,
-  create,
-  update,
-  remove,
-} from "../controllers/workstation.js";
+import { WorkstationController } from "../controllers/workstationController.js";
 import { authRole } from "../middleware/auth.js";
-import validateBody from "../middleware/validateBody.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
+import validateBody from "../middleware/validateBody.js";
 
 const WorkstationRouter = express.Router();
 
 WorkstationRouter.post(
   "/",
-  authRole([...GroupedRoles.ALL_BUT_STAFF]),
-  validateBody(["title", "password", "workstationSettingId"]),
+  authRole([...GroupedRoles.ALL_BUT_EMPLOYEE]),
+  validateBody(["title", "workstationSettingId"]),
   async (req, res) => {
     try {
-      await create(req, res);
+      await WorkstationController.create(req, res);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
+      internalError(res);
     }
   }
 );
 
 WorkstationRouter.get(
   "/",
-  authRole([...GroupedRoles.ALL_BUT_STAFF]),
+  authRole([...GroupedRoles.ALL_BUT_EMPLOYEE]),
   async (req, res) => {
-    await getAll(req, res);
+    try {
+      await WorkstationController.getAll(req, res);
+    } catch (err) {
+      console.error(err);
+      internalError(res);
+    }
   }
 );
 
 WorkstationRouter.get("/:workstationId", async (req, res) => {
-  await getById(req, res);
+  try {
+    await WorkstationController.getById(req, res);
+  } catch (err) {
+    console.error(err);
+    internalError(res);
+  }
 });
 
 WorkstationRouter.put(
   "/:workstationId",
-  authRole([...GroupedRoles.ALL_BUT_STAFF]),
+  authRole([...GroupedRoles.ALL_BUT_EMPLOYEE]),
   async (req, res) => {
     try {
-      await update(req, res);
+      await WorkstationController.update(req, res);
     } catch (err) {
       console.error(err);
       internalError(res);
@@ -54,13 +58,13 @@ WorkstationRouter.put(
 
 WorkstationRouter.delete(
   "/:workstationId",
-  authRole([...GroupedRoles.ALL_BUT_STAFF]),
+  authRole([...GroupedRoles.ALL_BUT_EMPLOYEE]),
   async (req, res) => {
     try {
-      await remove(req, res);
+      await WorkstationController.remove(req, res);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
+      internalError(res);
     }
   }
 );

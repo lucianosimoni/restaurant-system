@@ -1,11 +1,5 @@
 import express from "express";
-import {
-  create,
-  getAll,
-  getById,
-  updateById,
-  deleteById,
-} from "../controllers/staff.js";
+import { StaffController } from "../controllers/staffController.js";
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
@@ -21,7 +15,12 @@ StaffRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
   async (req, res) => {
-    await register(req, res);
+    try {
+      await StaffController.register(req, res);
+    } catch (err) {
+      console.error(err);
+      return internalError(res);
+    }
   }
 );
 
@@ -29,7 +28,12 @@ StaffRouter.get(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
   async (req, res) => {
-    await getAll(req, res);
+    try {
+      await StaffController.getAll(req, res);
+    } catch (err) {
+      console.error(err);
+      return internalError(res);
+    }
   }
 );
 
@@ -37,7 +41,12 @@ StaffRouter.get(
   "/:staffId",
   authRole([...GroupedRoles.MANAGER_OWNER]),
   async (req, res) => {
-    await getById(req, res);
+    try {
+      await StaffController.getById(req, res);
+    } catch (err) {
+      console.error(err);
+      return internalError(res);
+    }
   }
 );
 
@@ -47,10 +56,10 @@ StaffRouter.put(
   validateBody(["username", "firstName", "lastName"]),
   async (req, res) => {
     try {
-      await updateById(req, res);
+      await StaffController.updateById(req, res);
     } catch (err) {
       console.error(err);
-      internalError(res);
+      return internalError(res);
     }
   }
 );
@@ -59,9 +68,12 @@ StaffRouter.delete(
   "/:staffId",
   authRole({ allowedRoles: [...GroupedRoles.MANAGER_OWNER], useStaffId: true }),
   async (req, res) => {
-    // TODO: Do like the workstation, dividing more actions to the Routers
-    // const staffId = req.params.staffId
-    await deleteById(req, res);
+    try {
+      await StaffController.deleteById(req, res);
+    } catch (err) {
+      console.error(err);
+      return internalError(res);
+    }
   }
 );
 

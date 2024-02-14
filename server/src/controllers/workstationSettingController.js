@@ -11,7 +11,7 @@ import {
   missingBody,
 } from "../utils/defaultResponses.js";
 
-export async function register(req, res) {
+const create = async (req, res) => {
   const { title, description, screens } = req.body;
 
   if (!title) {
@@ -47,9 +47,9 @@ export async function register(req, res) {
   return res
     .status(201)
     .json({ createdWorkstationSetting: { ...createdWorkstationSetting } });
-}
+};
 
-export async function getAll(req, res) {
+const getAll = async (req, res) => {
   try {
     const workstationSettings = await getAllWorkstationSettings();
     return res.status(200).json({ workstationSettings: workstationSettings });
@@ -57,9 +57,9 @@ export async function getAll(req, res) {
     console.error("Error fetching all workstationSettings: ", error);
     return internalError(res, "Error while getting all workstationSettings.");
   }
-}
+};
 
-export async function getById(req, res) {
+const getById = async (req, res) => {
   const workstationSettingId = req.params.workstationSettingId;
 
   if (!parseInt(workstationSettingId)) {
@@ -78,4 +78,6 @@ export async function getById(req, res) {
     console.error("Error fetching workstation setting by Id: ", error);
     return internalError("Error while getting workstation setting by id.");
   }
-}
+};
+
+export const WorkstationSettingController = { create, getAll, getById };

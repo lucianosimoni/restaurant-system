@@ -15,10 +15,8 @@ import {
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-dotenv.config();
 
-export async function login(req, res) {
+const login = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
     return missingBody(res);
@@ -48,9 +46,9 @@ export async function login(req, res) {
     token,
   };
   return res.status(200).json({ loggedInStaff: loggedInStaff });
-}
+};
 
-export async function create(req, res) {
+const create = async (req, res) => {
   const { username, password, firstName, lastName, imageUrl } = req.body;
 
   if (!username || !password || !firstName || !lastName) {
@@ -79,9 +77,9 @@ export async function create(req, res) {
   }
 
   res.status(201).json({ createdStaff: { ...staff } });
-}
+};
 
-export async function getAll(req, res) {
+const getAll = async (req, res) => {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const allStaff = await getAllStaff(includeInfo);
@@ -90,9 +88,9 @@ export async function getAll(req, res) {
     console.error("Error fetching all staff: ", error);
     return internalError(res, "Error while getting all staff.");
   }
-}
+};
 
-export async function getById(req, res) {
+const getById = async (req, res) => {
   const staffId = req.params.staffId;
 
   if (!parseInt(staffId))
@@ -109,9 +107,9 @@ export async function getById(req, res) {
     console.error("Error fetching user by Id: ", error);
     return internalError("Error while getting user by id.");
   }
-}
+};
 
-export async function updateById(req, res) {
+const updateById = async (req, res) => {
   const { username, password, firstName, lastName, role } = req.body;
   if (!username || !password || !firstName || !lastName) {
     return missingBody(res);
@@ -141,9 +139,9 @@ export async function updateById(req, res) {
     console.error("Error updating staff: ", error);
     return internalError(res, "Error while updating staff.");
   }
-}
+};
 
-export async function deleteById(staffId, req, res) {
+const deleteById = async (staffId, req, res) => {
   try {
     // Check if staffId is valid
     if (!parseInt(staffId)) {
@@ -164,4 +162,13 @@ export async function deleteById(staffId, req, res) {
     console.error("Error deleting staff: ", error);
     return internalError(res, "Error while deleting staff.");
   }
-}
+};
+
+export const StaffController = {
+  login,
+  create,
+  getAll,
+  getById,
+  updateById,
+  deleteById,
+};

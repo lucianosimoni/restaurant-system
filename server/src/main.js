@@ -29,6 +29,7 @@ app.use(cors()); // FIXME: Only for Dev purposes!
 app.use(morgan("dev"));
 app.use(express.json());
 
+app.get("/", (req, res) => res.json({ running: true }));
 app.use("/auth", AuthRouter);
 app.use("/staff", auth, StaffRouter);
 app.use("/timesheet", auth, StaffTimesheetRouter);
@@ -43,10 +44,6 @@ app.use(
     customCss: ".swagger-ui .topbar { display: none }",
   })
 );
-
-app.get("/", (req, res) => {
-  res.json({ running: true });
-});
 
 app.listen(port, () => {
   console.log(`🟢 [SERVER] Running on http://localhost:${port}/`);

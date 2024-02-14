@@ -5,20 +5,12 @@ import {
   getWorkstationByTitle,
   deleteWorkstation,
 } from "../models/workstation.js";
-import {
-  internalError,
-  notFound,
-  missingBody,
-} from "../utils/defaultResponses.js";
+import { internalError, notFound } from "../utils/defaultResponses.js";
 
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-dotenv.config();
 
-export async function create(req, res) {
-  const { title, password, workstationSettingId, description, imageUrl } =
-    req.body;
+const create = async (req, res) => {
+  const { title, workstationSettingId, description, imageUrl } = req.body;
 
   const titleExists = await getWorkstationByTitle(title);
   if (titleExists) {
@@ -29,11 +21,8 @@ export async function create(req, res) {
 
   // TODO: check if WorkstationSettingID exists
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   const workstation = await createWorkstation({
     title: title,
-    passwordHash: hashedPassword,
     workstationSettingId: workstationSettingId,
     description: description ? description : null,
     imageUrl: imageUrl ? imageUrl : null,
@@ -51,9 +40,9 @@ export async function create(req, res) {
       token,
     },
   });
-}
+};
 
-export async function getAll(req, res) {
+const getAll = async (req, res) => {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const workstations = await getAllWorkstations(includeInfo);
@@ -62,9 +51,9 @@ export async function getAll(req, res) {
     console.error("Error fetching all workstations: ", error);
     return internalError(res, "Error while getting all workstations.");
   }
-}
+};
 
-export async function getById(req, res) {
+const getById = async (req, res) => {
   const workstationId = req.params.workstationId;
 
   if (!parseInt(workstationId)) {
@@ -85,9 +74,9 @@ export async function getById(req, res) {
     console.error("Error fetching workstation by Id: ", error);
     return internalError("Error while getting workstation by id.");
   }
-}
+};
 
-export async function update(req, res) {
+const update = async (req, res) => {
   const workstationId = req.params.workstationId;
   const { title, description, imageUrl, workstationSettingId } = req.body;
 
@@ -108,9 +97,9 @@ export async function update(req, res) {
     console.error("Error updating workstation: ", error);
     return internalError(res, "Error while updating workstation.");
   }
-}
+};
 
-export async function remove(req, res) {
+const remove = async (req, res) => {
   const workstationId = req.params.workstationId;
 
   try {
@@ -125,4 +114,12 @@ export async function remove(req, res) {
     console.error("Error deleting workstation: ", error);
     return internalError(res, "Error while deleting workstation.");
   }
-}
+};
+
+export const WorkstationController = {
+  create,
+  getAll,
+  getById,
+  update,
+  remove,
+};

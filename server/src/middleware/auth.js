@@ -5,8 +5,6 @@ import {
   missingAuth,
   missingBearer,
 } from "../utils/defaultResponses.js";
-import dotenv from "dotenv";
-dotenv.config();
 
 /**
  * #### Used to check if request has a valid Bearer token
@@ -28,10 +26,13 @@ export default function auth(req, res, next) {
 
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.loggedInStaff.staffId = decodedToken.staffId;
-    req.loggedInStaff.staffRole = decodedToken.staffRole;
+    req.loggedInStaff = {
+      id: decodedToken.staffId,
+      role: decodedToken.staffRole,
+    };
     next();
   } catch (err) {
+    console.error(err);
     return invalidToken(res);
   }
 }
@@ -43,18 +44,18 @@ export default function auth(req, res, next) {
  */
 export function authRole(allowedRoles) {
   return function (req, res, next) {
-    const { staffId, staffRole } = req.loggedInStaff;
-    if (!staffId || !staffRole) {
+    const { id, role } = req.loggedInStaff;
+    if (!id || !role) {
       return insufficientPermissions(res);
     }
 
     // TODO: Is this comment good?
-    // If the StaffId param is the same as the Token staffId, continue because it's their own data.
-    if (req.params.staffId == staffId) {
+    // If the StaffId param is the same as the Token id, continue because it's their own data.
+    if (req.params.staffId == id) {
       return next();
     }
 
-    if (allowedRoles.includes(staffRole)) {
+    if (allowedRoles.includes(role)) {
       next();
     } else {
       return insufficientPermissions(res);

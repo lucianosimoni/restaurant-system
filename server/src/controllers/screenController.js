@@ -10,7 +10,7 @@ import {
   missingBody,
 } from "../utils/defaultResponses.js";
 
-export async function register(req, res) {
+const create = async (req, res) => {
   const { title, path, description } = req.body;
 
   if (!title || !path) {
@@ -32,9 +32,9 @@ export async function register(req, res) {
   if (!screen) return internalError(res, "Error while creating the screen.");
 
   res.status(201).json({ createdScreen: { ...screen } });
-}
+};
 
-export async function getAll(req, res) {
+const getAll = async (req, res) => {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const screens = await getAllScreens(includeInfo);
@@ -43,9 +43,9 @@ export async function getAll(req, res) {
     console.error("Error fetching all screens: ", error);
     return internalError(res, "Error while getting all screens.");
   }
-}
+};
 
-export async function getById(req, res) {
+const getById = async (req, res) => {
   const screenId = req.params.screenId;
 
   if (!parseInt(screenId)) {
@@ -63,4 +63,6 @@ export async function getById(req, res) {
     console.error("Error fetching screen by Id: ", error);
     return internalError("Error while getting screen by id.");
   }
-}
+};
+
+export const ScreenController = { create, getAll, getById };

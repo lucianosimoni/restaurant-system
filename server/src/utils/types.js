@@ -12,6 +12,10 @@ export const GroupedRoles = {
     RoleTypes.MANAGER,
     RoleTypes.OWNER,
   ],
-  ALL_BUT_STAFF: [RoleTypes.SECTOR_LEADER, RoleTypes.MANAGER, RoleTypes.OWNER],
+  ALL_BUT_EMPLOYEE: [
+    RoleTypes.SECTOR_LEADER,
+    RoleTypes.MANAGER,
+    RoleTypes.OWNER,
+  ],
   MANAGER_OWNER: [RoleTypes.MANAGER, RoleTypes.OWNER],
 };
