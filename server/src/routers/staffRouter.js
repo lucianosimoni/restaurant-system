@@ -11,13 +11,13 @@ import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
 import validateBody from "../middleware/validateBody.js";
 
-const router = express.Router();
+const StaffRouter = express.Router();
 
 /*
 Login; Request Register
 are located in the routers/auth.js
 */
-router.post(
+StaffRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
   async (req, res) => {
@@ -25,11 +25,15 @@ router.post(
   }
 );
 
-router.get("/", authRole([...GroupedRoles.MANAGER_OWNER]), async (req, res) => {
-  await getAll(req, res);
-});
+StaffRouter.get(
+  "/",
+  authRole([...GroupedRoles.MANAGER_OWNER]),
+  async (req, res) => {
+    await getAll(req, res);
+  }
+);
 
-router.get(
+StaffRouter.get(
   "/:staffId",
   authRole([...GroupedRoles.MANAGER_OWNER]),
   async (req, res) => {
@@ -37,7 +41,7 @@ router.get(
   }
 );
 
-router.put(
+StaffRouter.put(
   "/:staffId",
   authRole([...GroupedRoles.MANAGER_OWNER]),
   validateBody(["username", "firstName", "lastName"]),
@@ -51,7 +55,7 @@ router.put(
   }
 );
 
-router.delete(
+StaffRouter.delete(
   "/:staffId",
   authRole({ allowedRoles: [...GroupedRoles.MANAGER_OWNER], useStaffId: true }),
   async (req, res) => {
@@ -61,4 +65,4 @@ router.delete(
   }
 );
 
-export default router;
+export default StaffRouter;

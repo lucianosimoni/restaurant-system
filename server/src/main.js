@@ -2,17 +2,17 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import compression from "compression";
-
-import auth from "./middleware/auth.js";
-import authRouter from "./routers/auth.js";
-import staffRouter from "./routers/staff.js";
-import staffTimesheetRouter from "./routers/staffTimesheet.js";
-import workstationRouter from "./routers/workstation.js";
-import workstationSettingRouter from "./routers/workstationSetting.js";
-import screenRouter from "./routers/screen.js";
-
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger.json" assert { type: "json" };
+
+import auth from "./middleware/auth.js";
+
+import AuthRouter from "./routers/authRouter.js";
+import StaffRouter from "./routers/staffRouter.js";
+import StaffTimesheetRouter from "./routers/staffTimesheetRouter.js";
+import WorkstationRouter from "./routers/workstationRouter.js";
+import WorkstationSettingRouter from "./routers/workstationSettingRouter.js";
+import ScreenRouter from "./routers/screenRouter.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -29,12 +29,12 @@ app.use(cors()); // FIXME: Only for Dev purposes!
 app.use(morgan("dev"));
 app.use(express.json());
 
-app.use("/auth", authRouter);
-app.use("/staff", auth, staffRouter);
-app.use("/timesheet", auth, staffTimesheetRouter);
-app.use("/workstation", auth, workstationRouter);
-app.use("/workstation-setting", auth, workstationSettingRouter);
-app.use("/screen", auth, screenRouter);
+app.use("/auth", AuthRouter);
+app.use("/staff", auth, StaffRouter);
+app.use("/timesheet", auth, StaffTimesheetRouter);
+app.use("/workstation", auth, WorkstationRouter);
+app.use("/workstation-setting", auth, WorkstationSettingRouter);
+app.use("/screen", auth, ScreenRouter);
 
 app.use(
   "/docs",

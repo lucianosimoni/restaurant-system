@@ -11,9 +11,9 @@ import validateBody from "../middleware/validateBody.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
 
-const router = express.Router();
+const WorkstationRouter = express.Router();
 
-router.post(
+WorkstationRouter.post(
   "/",
   authRole([...GroupedRoles.ALL_BUT_STAFF]),
   validateBody(["title", "password", "workstationSettingId"]),
@@ -27,15 +27,19 @@ router.post(
   }
 );
 
-router.get("/", authRole([...GroupedRoles.ALL_BUT_STAFF]), async (req, res) => {
-  await getAll(req, res);
-});
+WorkstationRouter.get(
+  "/",
+  authRole([...GroupedRoles.ALL_BUT_STAFF]),
+  async (req, res) => {
+    await getAll(req, res);
+  }
+);
 
-router.get("/:workstationId", async (req, res) => {
+WorkstationRouter.get("/:workstationId", async (req, res) => {
   await getById(req, res);
 });
 
-router.put(
+WorkstationRouter.put(
   "/:workstationId",
   authRole([...GroupedRoles.ALL_BUT_STAFF]),
   async (req, res) => {
@@ -48,7 +52,7 @@ router.put(
   }
 );
 
-router.delete(
+WorkstationRouter.delete(
   "/:workstationId",
   authRole([...GroupedRoles.ALL_BUT_STAFF]),
   async (req, res) => {
@@ -61,4 +65,4 @@ router.delete(
   }
 );
 
-export default router;
+export default WorkstationRouter;
