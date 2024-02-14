@@ -49,7 +49,7 @@ const login = async (req, res) => {
 };
 
 const create = async (req, res) => {
-  const { username, password, firstName, lastName, imageUrl } = req.body;
+  const { username, password, firstName, lastName } = req.body;
 
   if (!username || !password || !firstName || !lastName) {
     return missingBody(res);
@@ -70,7 +70,6 @@ const create = async (req, res) => {
     passwordHash: hashedPassword,
     firstName: firstName,
     lastName: lastName,
-    imageUrl: imageUrl ? imageUrl : "",
   });
   if (!staff) {
     return internalError(res, "Error while creating the staff.");

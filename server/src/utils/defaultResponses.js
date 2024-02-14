@@ -26,16 +26,30 @@ export function missingQuery(res) {
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"URL params are missing arguments."**_
  */
-export function missingParams(res) {
+export function missingParams(
+  res,
+  errorMessage = "URL params are missing arguments."
+) {
   return res.status(400).json({
-    error: { message: "URL params are missing arguments." },
+    error: { message: errorMessage },
+  });
+}
+
+/**
+ * ### _409_
+ * @param {Express.Response} res
+ * @param {string} errorMessage _(optional)_
+ * @returns {error} _error.message_ _**"Conflicting information found."**_
+ */
+export function conflict(res, errorMessage = "Conflicting information found.") {
+  return res.status(409).json({
+    error: { message: errorMessage },
   });
 }
 
 /**
  * ### _401_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"Username or Password is wrong."**_
  */
 export function wrongPasswordOrUsername(res) {
@@ -45,21 +59,23 @@ export function wrongPasswordOrUsername(res) {
 }
 
 /**
- * ### _401_
+ * ### _400_
  * @param {Express.Response} res
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"One or more Body arguments is wrong."**_
  */
-export function wrongBody(res) {
-  return res.status(401).json({
-    error: { message: "One or more Body arguments is wrong." },
+export function wrongBody(
+  res,
+  errorMessage = "One or more Body arguments is wrong."
+) {
+  return res.status(400).json({
+    error: { message: errorMessage },
   });
 }
 
 /**
  * ### _401_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"Authorization header missing."**_
  */
 export function missingAuth(res) {

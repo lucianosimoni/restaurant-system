@@ -9,8 +9,16 @@ import {
   internalError,
   notFound,
   missingBody,
+  conflict,
+  wrongBody,
 } from "../utils/defaultResponses.js";
 
+/**
+ *
+ * @param {{body:{title:"string",description:"string",screens:[1,2,3]}}} req - `Express Request` with a json body
+ * @param {Express.Response} res
+ * @returns {createdWorkstationSetting}
+ */
 const create = async (req, res) => {
   const { title, description, screens } = req.body;
 
@@ -20,19 +28,18 @@ const create = async (req, res) => {
 
   const titleExists = await getWorkstationSettingByTitle(title);
   if (titleExists) {
-    return res.status(409).json({
-      error: {
-        message: "Workstation Setting with entered Title already exists.",
-      },
-    });
+    return conflict(
+      res,
+      "Workstation Setting with entered Title already exists."
+    );
   }
 
   // Check if each screen exists
   const screensChecked = await Promise.all(
     screens.map(async (screenId) => await getScreenById(screenId))
   ).then((screensChecked) => screensChecked);
-  if (screensChecked.some((screen) => screen === null)) {
-    return notFound(res, "One or more screens do not exist.");
+  if (screensChecked.some((screen) => screen == null)) {
+    return wrongBody(res, "One or more screens do not exist.");
   }
 
   const createdWorkstationSetting = await createWorkstationSetting({
@@ -44,9 +51,7 @@ const create = async (req, res) => {
     return internalError(res, "Error while creating workstation setting.");
   }
 
-  return res
-    .status(201)
-    .json({ createdWorkstationSetting: { ...createdWorkstationSetting } });
+  return res.status(201).json({ createdWorkstationSetting });
 };
 
 const getAll = async (req, res) => {

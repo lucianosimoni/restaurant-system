@@ -5,7 +5,13 @@ import {
   getWorkstationByTitle,
   deleteWorkstation,
 } from "../models/workstation.js";
-import { internalError, notFound } from "../utils/defaultResponses.js";
+import { getWorkstationSettingById } from "../models/workstationSetting.js";
+import {
+  conflict,
+  internalError,
+  notFound,
+  wrongBody,
+} from "../utils/defaultResponses.js";
 
 import jwt from "jsonwebtoken";
 
@@ -14,12 +20,13 @@ const create = async (req, res) => {
 
   const titleExists = await getWorkstationByTitle(title);
   if (titleExists) {
-    return res.status(409).json({
-      error: { message: "Workstation with entered Title already exists." },
-    });
+    return conflict(res, "Workstation Title already exists.");
   }
 
-  // TODO: check if WorkstationSettingID exists
+  const settingExist = await getWorkstationSettingById(workstationSettingId);
+  if (!settingExist) {
+    return wrongBody(res, "Workstation Setting not found.");
+  }
 
   const workstation = await createWorkstation({
     title: title,

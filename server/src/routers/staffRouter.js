@@ -14,9 +14,10 @@ are located in the routers/auth.js
 StaffRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
+  validateBody(["username", "password", "firstName", "lastName"]),
   async (req, res) => {
     try {
-      await StaffController.register(req, res);
+      await StaffController.create(req, res);
     } catch (err) {
       console.error(err);
       return internalError(res);

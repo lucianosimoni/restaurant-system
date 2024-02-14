@@ -3,15 +3,17 @@ import { WorkstationSettingController } from "../controllers/workstationSettingC
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
+import validateBody from "../middleware/validateBody.js";
 
 const WorkstationSettingRouter = express.Router();
 
 WorkstationSettingRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
+  validateBody(["title", "description", "screens"]),
   async (req, res) => {
     try {
-      await WorkstationSettingController.register(req, res);
+      await WorkstationSettingController.create(req, res);
     } catch (err) {
       console.error(err);
       internalError(res);
