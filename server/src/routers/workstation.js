@@ -9,6 +9,7 @@ import {
 import { authRole } from "../middleware/auth.js";
 import validateBody from "../middleware/validateBody.js";
 import { GroupedRoles } from "../utils/types.js";
+import { internalError } from "../utils/defaultResponses.js";
 
 const router = express.Router();
 
@@ -42,7 +43,7 @@ router.put(
       await update(req, res);
     } catch (err) {
       console.error(err);
-      res.status(500).json({ error: "Internal Server Error" });
+      internalError(res);
     }
   }
 );

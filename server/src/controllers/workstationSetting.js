@@ -1,15 +1,15 @@
 import {
-  internalError,
-  notFound,
-  missingBody,
-} from "../utils/defaultResponses.js";
-import {
   createWorkstationSetting,
   getAllWorkstationSettings,
   getWorkstationSettingById,
   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
 import { getScreenById } from "../models/screen.js";
+import {
+  internalError,
+  notFound,
+  missingBody,
+} from "../utils/defaultResponses.js";
 
 export async function register(req, res) {
   const { title, description, screens } = req.body;

@@ -1,14 +1,14 @@
 import {
-  internalError,
-  notFound,
-  missingBody,
-} from "../utils/defaultResponses.js";
-import {
   createScreen,
   getAllScreens,
   getScreenById,
   getScreenByTitle,
 } from "../models/screen.js";
+import {
+  internalError,
+  notFound,
+  missingBody,
+} from "../utils/defaultResponses.js";
 
 export async function register(req, res) {
   const { title, path, description } = req.body;

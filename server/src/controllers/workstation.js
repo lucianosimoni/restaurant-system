@@ -1,15 +1,16 @@
 import {
-  internalError,
-  notFound,
-  missingBody,
-} from "../utils/defaultResponses.js";
-import {
   createWorkstation,
   getAllWorkstations,
   getWorkstationById,
   getWorkstationByTitle,
   deleteWorkstation,
 } from "../models/workstation.js";
+import {
+  internalError,
+  notFound,
+  missingBody,
+} from "../utils/defaultResponses.js";
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";

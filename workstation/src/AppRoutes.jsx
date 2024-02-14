@@ -20,19 +20,19 @@ export default function AppRoutes() {
 
         <Route
           path="/logout"
-          element={<ProtectedRoute routeElement={<Logout />} redirectTo="/login" />}
+          element={<ProtectedRoute routeElement={<Logout />} failureRedirect="/login" />}
         />
         <Route
           path="/initial-settings"
-          element={<ProtectedRoute routeElement={<InitialSettings />} redirectTo="/login" />}
+          element={<ProtectedRoute routeElement={<InitialSettings />} failureRedirect="/login" />}
         />
         <Route
           path="/clock-in-out"
-          element={<ProtectedRoute routeElement={<ClockInOut />} redirectTo="/login" />}
+          element={<ProtectedRoute routeElement={<ClockInOut />} failureRedirect="/login" />}
         />
         <Route
           path="/settings"
-          element={<ProtectedRoute routeElement={<Settings />} redirectTo="/login" />}
+          element={<ProtectedRoute routeElement={<Settings />} failureRedirect="/login" />}
         />
       </Route>
 

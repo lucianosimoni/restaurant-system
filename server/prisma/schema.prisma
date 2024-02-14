@@ -15,7 +15,7 @@ model Staff {
   id                                  Int              @id @default(autoincrement())
   username                            String           @unique
   passwordHash                        String
-  role                                StaffRole        @default(STAFF)
+  role                                StaffRole        @default(EMPLOYEE)
   // 🔌 Connections
   sectorLeader                        SectorLeader?
   info                                StaffInfo?
@@ -223,7 +223,7 @@ enum ItemType {
 }
 
 enum StaffRole {
-  STAFF
+  EMPLOYEE
   SECTOR_LEADER
   MANAGER
   OWNER

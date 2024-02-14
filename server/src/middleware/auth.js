@@ -1,8 +1,20 @@
 import jwt from "jsonwebtoken";
-import { missingAuth, missingBearer } from "../utils/defaultResponses.js";
+import {
+  insufficientPermissions,
+  invalidToken,
+  missingAuth,
+  missingBearer,
+} from "../utils/defaultResponses.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+/**
+ * #### Used to check if request has a valid Bearer token
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @param {NextFunction} next
+ * @returns {NextFunction}
+ */
 export default function auth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
@@ -16,69 +28,36 @@ export default function auth(req, res, next) {
 
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    console.log("auth decodedToken is:");
-    console.log(decodedToken);
-    req.staffId = decodedToken.staffId;
-    req.staffRole = decodedToken.staffRole;
+    req.loggedInStaff.staffId = decodedToken.staffId;
+    req.loggedInStaff.staffRole = decodedToken.staffRole;
     next();
   } catch (err) {
-    return res.status(401).json({ error: { message: "Invalid token" } });
+    return invalidToken(res);
   }
 }
 
 /**
- *
- * @param {["OWNER", "SECTOR_LEADER", "STAFF", "MANAGER"]} allowedRoles - List of allowed roles.
- * @returns
+ * #### Verifies if the staff's role is any of the allowed roles to proceed.
+ * @param {["OWNER", "SECTOR_LEADER", "EMPLOYEE", "MANAGER"]} allowedRoles - List of *allowed roles*.
+ * @returns {Function} Middleware function for Express.
  */
 export function authRole(allowedRoles) {
   return function (req, res, next) {
-    console.log("Authenticating roles:");
-    console.log(allowedRoles);
-
-    let userRole = req.staffRole;
-    if (!userRole) {
-      const authHeader = req.headers.authorization;
-      if (!authHeader) {
-        return missingAuth(res);
-      }
-      const token = authHeader.split(" ")[1];
-      if (!token) {
-        return missingBearer(res);
-      }
-
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-      req.staffId = decodedToken.staffId;
-      req.staffRole = decodedToken.staffRole;
-      userRole = decodedToken.staffRole;
+    const { staffId, staffRole } = req.loggedInStaff;
+    if (!staffId || !staffRole) {
+      return insufficientPermissions(res);
     }
 
-    console.log(`and userRole out of request by auth.js is: ${userRole}`);
+    // TODO: Is this comment good?
+    // If the StaffId param is the same as the Token staffId, continue because it's their own data.
+    if (req.params.staffId == staffId) {
+      return next();
+    }
 
-    if (allowedRoles.includes(userRole)) {
+    if (allowedRoles.includes(staffRole)) {
       next();
     } else {
-      return res
-        .status(403)
-        .json({ error: { message: "Insufficient permissions" } });
+      return insufficientPermissions(res);
     }
   };
-}
-
-export function authStaffRole(req, res, next, roleNeeded) {
-  try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    req.staffId = decodedToken.staffId;
-
-    // Verify Role
-    if (decodedToken.staffRole !== roleNeeded) {
-      return res
-        .status(403)
-        .json({ error: { message: "Insufficient privileges" } });
-    }
-
-    next();
-  } catch (err) {
-    return res.status(401).json({ error: { message: "Invalid token" } });
-  }
 }

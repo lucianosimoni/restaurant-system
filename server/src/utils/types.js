@@ -1,5 +1,5 @@
 export const RoleTypes = {
-  STAFF: "STAFF",
+  EMPLOYEE: "EMPLOYEE",
   SECTOR_LEADER: "SECTOR_LEADER",
   MANAGER: "MANAGER",
   OWNER: "OWNER",
@@ -7,7 +7,7 @@ export const RoleTypes = {
 
 export const GroupedRoles = {
   ALL_EMPLOYEES: [
-    RoleTypes.STAFF,
+    RoleTypes.EMPLOYEE,
     RoleTypes.SECTOR_LEADER,
     RoleTypes.MANAGER,
     RoleTypes.OWNER,

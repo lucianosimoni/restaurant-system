@@ -1,13 +1,13 @@
 import {
-  internalError,
-  missingBody,
-  wrongBody,
-} from "../utils/defaultResponses.js";
-import {
   createTimeRecord,
   getLastRecord,
   updateTimeRecord,
 } from "../models/staffTimesheet.js";
+import {
+  internalError,
+  missingBody,
+  wrongBody,
+} from "../utils/defaultResponses.js";
 
 export async function autoClock(req, res) {
   const { staffId, imageUrl, currentTime } = req.body;

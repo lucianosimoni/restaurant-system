@@ -1,15 +1,18 @@
 import {
+  getStaffByUsername,
+  createStaff,
+  getAllStaff,
+  getStaffById,
+  updateStaffById,
+  deleteStaffById,
+} from "../models/staff.js";
+import {
   internalError,
   missingBody,
   notFound,
   wrongPasswordOrUsername,
 } from "../utils/defaultResponses.js";
-import {
-  getStaffByUsername,
-  createStaff,
-  getAllStaff,
-  getStaffById,
-} from "../models/staff.js";
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
@@ -47,7 +50,7 @@ export async function login(req, res) {
   return res.status(200).json({ loggedInStaff: loggedInStaff });
 }
 
-export async function register(req, res) {
+export async function create(req, res) {
   const { username, password, firstName, lastName, imageUrl } = req.body;
 
   if (!username || !password || !firstName || !lastName) {
@@ -105,5 +108,60 @@ export async function getById(req, res) {
   } catch (error) {
     console.error("Error fetching user by Id: ", error);
     return internalError("Error while getting user by id.");
+  }
+}
+
+export async function updateById(req, res) {
+  const { username, password, firstName, lastName, role } = req.body;
+  if (!username || !password || !firstName || !lastName) {
+    return missingBody(res);
+  }
+  // TODO: FUCKING HASH THE FUCKING PASSWORD AGAIn
+
+  const staffId = req.params.staffId;
+
+  if (!parseInt(staffId)) {
+    return notFound(res, "Staff ID not found.");
+  }
+
+  try {
+    const staff = await getStaffById(parseInt(staffId));
+    if (!staff) {
+      return notFound(res);
+    }
+
+    // Update the staff
+    const updatedStaff = await updateStaffById({
+      ...staff,
+      ...req.body,
+    });
+
+    return res.status(200).json({ updatedStaff });
+  } catch (error) {
+    console.error("Error updating staff: ", error);
+    return internalError(res, "Error while updating staff.");
+  }
+}
+
+export async function deleteById(staffId, req, res) {
+  try {
+    // Check if staffId is valid
+    if (!parseInt(staffId)) {
+      return res.status(400).json({ error: "Invalid staff ID." });
+    }
+
+    // Check if staff exists
+    const staff = await getStaffById(parseInt(staffId));
+    if (!staff) {
+      return notFound(res);
+    }
+
+    // Delete the staff
+    await deleteStaffById(parseInt(staffId));
+
+    return res.status(204).end();
+  } catch (error) {
+    console.error("Error deleting staff: ", error);
+    return internalError(res, "Error while deleting staff.");
   }
 }
