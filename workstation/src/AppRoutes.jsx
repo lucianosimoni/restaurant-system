@@ -1,39 +1,41 @@
 import { Routes, Route } from 'react-router-dom';
 
-import Root from './pages/Root.jsx';
-import Home from './pages/Home.jsx';
+import Layout from './pages/Layout.jsx';
 import Login from './pages/auth/Login.jsx';
-import ClockInOut from './pages/timesheet/ClockInOut.jsx';
 import ErrorPage from './pages/ErrorPage.jsx';
 import Settings from './pages/settings/Settings.jsx';
-import InitialSettings from './pages/auth/InitialSettings.jsx';
-import Logout from './pages/auth/Logout.jsx';
+import InitialSettings from './pages/settings/InitialSettings.jsx';
 import ProtectedRoute from './ProtectedRoute.jsx';
+
+import AppsLayout from './pages/apps/Layout.jsx';
+import ClockInOutLayout from './pages/apps/clockinout/Layout.jsx';
 
 export default function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Root />}>
-        <Route path="/" element={<Home />} />
+      <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Login />} />
 
-        <Route path="/login" element={<Login />} />
-
-        <Route
-          path="/logout"
-          element={<ProtectedRoute routeElement={<Logout />} failureRedirect="/login" />}
-        />
+        {/* 🛡️ Protected Routes */}
         <Route
           path="/initial-settings"
-          element={<ProtectedRoute routeElement={<InitialSettings />} failureRedirect="/login" />}
-        />
-        <Route
-          path="/clock-in-out"
-          element={<ProtectedRoute routeElement={<ClockInOut />} failureRedirect="/login" />}
+          element={<ProtectedRoute routeElement={<InitialSettings />} notAuthRedirect="/" />}
         />
         <Route
           path="/settings"
-          element={<ProtectedRoute routeElement={<Settings />} failureRedirect="/login" />}
+          element={<ProtectedRoute routeElement={<Settings />} notAuthRedirect="/" />}
         />
+
+        {/* 📱 Apps (Screens with actions) */}
+        <Route
+          path="/app"
+          element={<ProtectedRoute routeElement={<AppsLayout />} notAuthRedirect="/" />}
+        >
+          <Route
+            path="/app/clock-in-out"
+            element={<ProtectedRoute routeElement={<ClockInOutLayout />} notAuthRedirect="/" />}
+          />
+        </Route>
       </Route>
 
       <Route path="*" element={<ErrorPage />} />

@@ -12,11 +12,16 @@ import Grow from '@mui/material/Grow';
 import Typography from '@mui/material/Typography';
 
 export default function Login() {
+  const staff = useStaffStore((state) => state);
+
   const [waiting, setWaiting] = useState(false);
   const [wrongCredentials, setWrongCredentials] = useState(false);
-  const staffLogin = useStaffStore((state) => state.login);
-  const staff = useStaffStore((state) => state);
   const navigate = useNavigate();
+
+  // TODO: Transform the auth folder into a logic similar to apps/clockinout that uses a Layout to manage all the states for that app
+  // auth would be similar to an app, with multiple screens: Login, Initial Settings, maybe something else
+  // at the end of the Logic, then we truly authenticate this Workstation.
+  // TODO: Check the ProtectedRoute.jsx TODO:.
 
   const formSubmit = async (e) => {
     e.preventDefault();
@@ -26,12 +31,15 @@ export default function Login() {
     const password = e.target.password.value;
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/staff/login`, { username, password });
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/staff/login`, {
+        username,
+        password,
+      });
       if (res.status != 200) {
         throw new Error('Response Status code is not 200');
       }
       const { loggedInStaff } = res.data;
-      staffLogin(loggedInStaff);
+      staff.login(loggedInStaff);
       navigate('/initial-settings');
     } catch (err) {
       setWrongCredentials(true);
@@ -57,8 +65,18 @@ export default function Login() {
         </header>
 
         <main>
-          <form onSubmit={formSubmit} onChange={() => setWrongCredentials(false)} className="flex flex-col gap-2">
-            <TextField id="userOrEmail" variant="filled" label="Nome de Usuario" type="text" required />
+          <form
+            onSubmit={formSubmit}
+            onChange={() => setWrongCredentials(false)}
+            className="flex flex-col gap-2"
+          >
+            <TextField
+              id="userOrEmail"
+              variant="filled"
+              label="Nome de Usuario"
+              type="text"
+              required
+            />
             <TextField id="password" variant="filled" label="Senha" type="password" required />
 
             <Grow in={wrongCredentials} mountOnEnter unmountOnExit>

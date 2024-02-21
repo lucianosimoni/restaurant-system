@@ -57,17 +57,16 @@ model StaffTimesheet {
 }
 
 model Sector {
-  id                  Int                  @id @default(autoincrement())
-  title               String               @unique
-  description         String?
+  id             Int           @id @default(autoincrement())
+  title          String        @unique
+  description    String?
   // 🔌 Connections
-  staff               Staff[] // One-to-many relation to Staff
-  screens             Screen[] // Many-to-Many relation to Screen
-  workstationSettings WorkstationSetting[]
-  sectorLeader        SectorLeader?
-  childSectors        Sector[]             @relation("SectorToSector") // Self-relation for nested sectors
-  parentSector        Sector?              @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
-  parentSectorId      Int? //✈️FK🟡
+  staff          Staff[] // One-to-many relation to Staff
+  screens        App[] // Many-to-Many relation to App
+  sectorLeader   SectorLeader?
+  childSectors   Sector[]      @relation("SectorToSector") // Self-relation for nested sectors
+  parentSector   Sector?       @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
+  parentSectorId Int? //✈️FK🟡
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -138,27 +137,27 @@ model ItemInfo {
   updatedAt DateTime @updatedAt
 }
 
-// Screens (Pre-defined by Devs) -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-model Screen {
-  id                  Int                  @id @default(autoincrement())
-  title               String               @unique
-  path                String               @unique
+// Apps (Pre-defined by Devs) -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+model App {
+  id             Int           @id @default(autoincrement())
+  title          String        @unique // ex: Timesheet
+  path           String        @unique // ex: "app/clock-in-out"
   // 🔌 Connections
   // TODO: Remove the infoId from here, leave it to be included in the model when needed, not always
-  info                ScreenInfo           @relation(fields: [infoId], references: [id])
-  infoId              Int                  @unique //✈️FK🟡
-  sectors             Sector[]
-  workstationSettings WorkstationSetting[]
+  info           AppInfo       @relation(fields: [infoId], references: [id])
+  infoId         Int           @unique //✈️FK🟡
+  allowedSectors Sector[]
+  workstations   Workstation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model ScreenInfo {
+model AppInfo {
   id          Int      @id @default(autoincrement())
   description String?
   // 🔌 Connections
-  screen      Screen?
+  screen      App?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -169,13 +168,12 @@ model Workstation {
   title String @unique
 
   // 🔌 Connections
-  info                             WorkstationInfo    @relation(fields: [infoId], references: [id])
-  infoId                           Int                @unique //✈️FK🟡
-  setting                          WorkstationSetting @relation(fields: [settingId], references: [id])
-  settingId                        Int                @unique //✈️FK🟡
-  authenticatedBy                  Staff?             @relation("Authentications", fields: [authenticatedByStaffId], references: [id])
+  usableApps                       App[]
+  info                             WorkstationInfo @relation(fields: [infoId], references: [id])
+  infoId                           Int             @unique //✈️FK🟡
+  authenticatedBy                  Staff?          @relation("Authentications", fields: [authenticatedByStaffId], references: [id])
   authenticatedByStaffId           Int?
-  previouslyAuthenticatedBy        Staff?             @relation("PreviousAuthentications", fields: [previouslyAuthenticatedByStaffId], references: [id])
+  previouslyAuthenticatedBy        Staff?          @relation("PreviousAuthentications", fields: [previouslyAuthenticatedByStaffId], references: [id])
   previouslyAuthenticatedByStaffId Int?
 
   createdAt DateTime @default(now())
@@ -190,19 +188,6 @@ model WorkstationInfo {
   imageUrl    String?
   // 🔌 Connections
   workstation Workstation?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model WorkstationSetting {
-  id           Int           @id @default(autoincrement())
-  title        String        @unique // Cash Register, etc
-  description  String?
-  // 🔌 Connections
-  workstations Workstation[]
-  screens      Screen[]
-  sectors      Sector[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
