@@ -1,16 +1,16 @@
 import express from "express";
-import { ScreenController } from "../controllers/screenController.js";
+import { AppController } from "../controllers/appController.js";
 import { internalError } from "../utils/defaultResponses.js";
 import validateBody from "../middleware/validateBody.js";
 
-const ScreenRouter = express.Router();
+const AppRouter = express.Router();
 
-ScreenRouter.post(
+AppRouter.post(
   "/",
   validateBody(["title", "path", "description"]),
   async (req, res) => {
     try {
-      await ScreenController.create(req, res);
+      await AppController.create(req, res);
     } catch (err) {
       console.error(err);
       return internalError(res);
@@ -18,22 +18,22 @@ ScreenRouter.post(
   }
 );
 
-ScreenRouter.get("/", async (req, res) => {
+AppRouter.get("/", async (req, res) => {
   try {
-    await ScreenController.getAll(req, res);
+    await AppController.getAll(req, res);
   } catch (err) {
     console.error(err);
     return internalError(res);
   }
 });
 
-ScreenRouter.get("/:screenId", async (req, res) => {
+AppRouter.get("/:appId", async (req, res) => {
   try {
-    await ScreenController.getById(req, res);
+    await AppController.getById(req, res);
   } catch (err) {
     console.error(err);
     return internalError(res);
   }
 });
 
-export default ScreenRouter;
+export default AppRouter;

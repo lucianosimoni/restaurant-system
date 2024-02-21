@@ -4,7 +4,7 @@ import {
   getWorkstationSettingById,
   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
-import { getScreenById } from "../models/screen.js";
+import { getAppById } from "../models/app.js";
 import {
   internalError,
   notFound,
@@ -13,14 +13,16 @@ import {
   wrongBody,
 } from "../utils/defaultResponses.js";
 
+//TODO: Remove Setting
+
 /**
  *
- * @param {{body:{title:"string",description:"string",screens:[1,2,3]}}} req - `Express Request` with a json body
+ * @param {{body:{title:"string",description:"string",apps:[1,2,3]}}} req - `Express Request` with a json body
  * @param {Express.Response} res
  * @returns {createdWorkstationSetting}
  */
 const create = async (req, res) => {
-  const { title, description, screens } = req.body;
+  const { title, description, apps } = req.body;
 
   if (!title) {
     return missingBody(res);
@@ -34,18 +36,18 @@ const create = async (req, res) => {
     );
   }
 
-  // Check if each screen exists
-  const screensChecked = await Promise.all(
-    screens.map(async (screenId) => await getScreenById(screenId))
-  ).then((screensChecked) => screensChecked);
-  if (screensChecked.some((screen) => screen == null)) {
-    return wrongBody(res, "One or more screens do not exist.");
+  // Check if each app exists
+  const appsChecked = await Promise.all(
+    apps.map(async (appId) => await getAppById(appId))
+  ).then((appsChecked) => appsChecked);
+  if (appsChecked.some((app) => app == null)) {
+    return wrongBody(res, "One or more apps do not exist.");
   }
 
   const createdWorkstationSetting = await createWorkstationSetting({
     title,
     description,
-    screens,
+    apps,
   });
   if (!createdWorkstationSetting) {
     return internalError(res, "Error while creating workstation setting.");

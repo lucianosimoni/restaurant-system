@@ -12,7 +12,7 @@ import StaffRouter from "./routers/staffRouter.js";
 import StaffTimesheetRouter from "./routers/staffTimesheetRouter.js";
 import WorkstationRouter from "./routers/workstationRouter.js";
 import WorkstationSettingRouter from "./routers/workstationSettingRouter.js";
-import ScreenRouter from "./routers/screenRouter.js";
+import AppRouter from "./routers/appRouter.js";
 
 const app = express();
 const port = process.env.PORT;
@@ -35,7 +35,7 @@ app.use("/staff", auth, StaffRouter);
 app.use("/timesheet", auth, StaffTimesheetRouter);
 app.use("/workstation", auth, WorkstationRouter);
 app.use("/workstation-setting", auth, WorkstationSettingRouter);
-app.use("/screen", auth, ScreenRouter);
+app.use("/app", auth, AppRouter);
 
 app.use(
   "/docs",

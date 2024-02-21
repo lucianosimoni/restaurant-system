@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+// TODO: Transform whole file into one object export as in the controllers/
+
 export async function createWorkstation(data) {
   return await prisma.workstation.create({
     data: {

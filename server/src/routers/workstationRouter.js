@@ -10,7 +10,13 @@ const WorkstationRouter = express.Router();
 WorkstationRouter.post(
   "/",
   authRole([...GroupedRoles.ALL_BUT_EMPLOYEE]),
-  validateBody(["title", "workstationSettingId", "description", "imageUrl"]),
+  validateBody([
+    "title",
+    "usableApps",
+    "authenticatedBy",
+    "description",
+    "imageUrl",
+  ]),
   async (req, res) => {
     try {
       await WorkstationController.create(req, res);

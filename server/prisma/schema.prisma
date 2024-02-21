@@ -62,7 +62,7 @@ model Sector {
   description    String?
   // 🔌 Connections
   staff          Staff[] // One-to-many relation to Staff
-  screens        App[] // Many-to-Many relation to App
+  allowedApps    App[] // Many-to-Many relation to App
   sectorLeader   SectorLeader?
   childSectors   Sector[]      @relation("SectorToSector") // Self-relation for nested sectors
   parentSector   Sector?       @relation("SectorToSector", fields: [parentSectorId], references: [id]) // Self-relation for nested sectors
@@ -157,7 +157,7 @@ model AppInfo {
   id          Int      @id @default(autoincrement())
   description String?
   // 🔌 Connections
-  screen      App?
+  app         App?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -171,8 +171,8 @@ model Workstation {
   usableApps                       App[]
   info                             WorkstationInfo @relation(fields: [infoId], references: [id])
   infoId                           Int             @unique //✈️FK🟡
-  authenticatedBy                  Staff?          @relation("Authentications", fields: [authenticatedByStaffId], references: [id])
-  authenticatedByStaffId           Int?
+  authenticatedBy                  Staff           @relation("Authentications", fields: [authenticatedByStaffId], references: [id])
+  authenticatedByStaffId           Int
   previouslyAuthenticatedBy        Staff?          @relation("PreviousAuthentications", fields: [previouslyAuthenticatedByStaffId], references: [id])
   previouslyAuthenticatedByStaffId Int?
 

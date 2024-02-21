@@ -1,18 +1,20 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
+//TODO: Remove Setting
+
 export async function createWorkstationSetting(data) {
   return await prisma.workstationSetting
     .create({
       data: {
         title: data.title,
         description: data.description,
-        screens: {
-          connect: data.screens?.map((screenId) => ({ id: screenId })) || [],
+        apps: {
+          connect: data.apps?.map((appId) => ({ id: appId })) || [],
         },
       },
       include: {
-        screens: true,
+        apps: true,
       },
     })
     .then((createdWorkstation) => {
@@ -39,7 +41,7 @@ export async function getWorkstationSettingById(workstationSettingId) {
       id: workstationSettingId,
     },
     include: {
-      screens: true,
+      apps: true,
     },
   });
 }

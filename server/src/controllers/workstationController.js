@@ -5,7 +5,7 @@ import {
   getWorkstationByTitle,
   deleteWorkstation,
 } from "../models/workstation.js";
-import { getWorkstationSettingById } from "../models/workstationSetting.js";
+import { getAppById } from "../models/app.js";
 import {
   conflict,
   internalError,
@@ -14,28 +14,45 @@ import {
 } from "../utils/defaultResponses.js";
 
 import jwt from "jsonwebtoken";
+import { getStaffById } from "../models/staff.js";
 
+/**
+ * @param {{body:{title:"string",description:"string",usableApps:[1,2,3]}}} req - `Express Request` with a json body
+ * @param {Express.Response} res
+ * @returns {createdWorkstationSetting}
+ */
 const create = async (req, res) => {
-  const { title, workstationSettingId, description, imageUrl } = req.body;
+  const { title, usableApps, authenticatedById, description, imageUrl } =
+    req.body;
 
   const titleExists = await getWorkstationByTitle(title);
   if (titleExists) {
     return conflict(res, "Workstation Title already exists.");
   }
 
-  const settingExist = await getWorkstationSettingById(workstationSettingId);
-  if (!settingExist) {
-    return wrongBody(res, "Workstation Setting not found.");
+  // TODO: Check if works
+  // Check if each usable app ID exists
+  const appsChecked = await Promise.all(
+    usableApps.map(async (appId) => await getAppById(appId))
+  ).then((appsChecked) => appsChecked);
+  if (appsChecked.some((app) => app == null)) {
+    return wrongBody(res, "One or more usableApps do not exist.");
+  }
+
+  // TODO: Check if works
+  const staffAuthenticated = await getStaffById(authenticatedById);
+  if (!staffAuthenticated) {
+    return wrongBody(res, "Body argument authenticatedById does not exist.");
   }
 
   const workstation = await createWorkstation({
     title: title,
-    workstationSettingId: workstationSettingId,
+    usableApps: usableApps,
     description: description ? description : null,
     imageUrl: imageUrl ? imageUrl : null,
   });
   if (!workstation)
-    return internalError(res, "Error while creating the workstation.");
+    return internalError(res, "Internal error while creating the workstation.");
 
   const token = jwt.sign(
     { workstationId: workstation.id },
@@ -85,14 +102,14 @@ const getById = async (req, res) => {
 
 const update = async (req, res) => {
   const workstationId = req.params.workstationId;
-  const { title, description, imageUrl, workstationSettingId } = req.body;
+  const { title, description, imageUrl, usableApps } = req.body;
 
   try {
     const updatedWorkstation = await updateWorkstation(workstationId, {
       title,
       description,
       imageUrl,
-      workstationSettingId,
+      usableApps,
     });
 
     if (!updatedWorkstation) {
