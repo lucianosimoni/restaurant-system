@@ -10,9 +10,11 @@ import Alert from '@mui/material/Alert';
 import Container from '@mui/material/Container';
 import Grow from '@mui/material/Grow';
 import Typography from '@mui/material/Typography';
+import { useWorkstationStore } from '../../store/workstationStore.js';
 
 export default function Login() {
   const staff = useStaffStore((state) => state);
+  const workstation = useWorkstationStore((state) => state);
 
   const [waiting, setWaiting] = useState(false);
   const [wrongCredentials, setWrongCredentials] = useState(false);
@@ -31,7 +33,7 @@ export default function Login() {
     const password = e.target.password.value;
 
     try {
-      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/staff/login`, {
+      const res = await axios.post(`${import.meta.env.VITE_SERVER_URL}/auth/workstation/login`, {
         username,
         password,
       });
@@ -39,8 +41,14 @@ export default function Login() {
         throw new Error('Response Status code is not 200');
       }
       const { loggedInStaff } = res.data;
-      staff.login(loggedInStaff);
-      navigate('/initial-settings');
+      console.log(loggedInStaff);
+
+      // TODO: Save the loggedInStaff.id returned in the auth layout (TO BE ADDED) | 1/2
+      // TODO: Call the wStation.authenticate with respective Initial Settings & Staff shit. | 2/2
+
+      // staff.login(loggedInStaff);
+      // navigate('/initial-settings');
+      console.log('logged in');
     } catch (err) {
       setWrongCredentials(true);
       switch (err.response.status) {

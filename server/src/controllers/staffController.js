@@ -7,20 +7,19 @@ import {
   deleteStaffById,
 } from "../models/staff.js";
 import {
+  insufficientPermissions,
   internalError,
   missingBody,
   notFound,
   wrongPasswordOrUsername,
 } from "../utils/defaultResponses.js";
+import { RoleTypes as role } from "../utils/types.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 const login = async (req, res) => {
   const { username, password } = req.body;
-  if (!username || !password) {
-    return missingBody(res);
-  }
 
   const staff = await getStaffByUsername(username);
   if (!staff) {
@@ -44,6 +43,48 @@ const login = async (req, res) => {
   const loggedInStaff = {
     ...staff,
     token,
+  };
+  return res.status(200).json({ loggedInStaff: loggedInStaff });
+};
+
+/**
+ * #### Made to login into Workstations, because only a selected type of Roles must be allowed to create one.
+ * Checks the role before returning the loggedInStaff.
+ * Only returns if the LoggedInStaff is within one of the valid given roles.
+ * @param {{body:{title:"string",description:"string",usableApps:[1,2,3]}}} req - `Express Request` with a json body
+ * @param {Express.Response} res
+ * @returns {createdWorkstationSetting}
+ */
+const loginWorkstation = async (req, res) => {
+  const { username, password } = req.body;
+
+  const staff = await getStaffByUsername(username);
+  if (!staff) {
+    return wrongPasswordOrUsername(res);
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, staff.passwordHash);
+  if (!isPasswordValid) {
+    return wrongPasswordOrUsername(res);
+  }
+
+  delete staff.passwordHash;
+
+  // TODO: Allow roles [SECTOR_LEADER, MANAGER, OWNER]
+  const allowedRole = [role.SECTOR_LEADER, role.MANAGER, role.OWNER].includes(
+    staff.role
+  );
+  if (!allowedRole) {
+    return insufficientPermissions(
+      res,
+      "Insufficient role permissions to create a workstation."
+    );
+  }
+
+  const loggedInStaff = {
+    id: staff.id,
+    role: staff.role,
+    username: staff.username,
   };
   return res.status(200).json({ loggedInStaff: loggedInStaff });
 };
@@ -165,6 +206,7 @@ const deleteById = async (staffId, req, res) => {
 
 export const StaffController = {
   login,
+  loginWorkstation,
   create,
   getAll,
   getById,

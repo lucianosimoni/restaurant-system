@@ -3,59 +3,47 @@ import { persist } from 'zustand/middleware';
 
 const defaultState = {
   isAuthenticated: false,
-  token: null,
   id: null,
+  token: null,
+  authenticatedBy: null, // Staff Id
+  previouslyAuthenticatedBy: null,
   title: '',
   info: {
+    id: null,
     description: '',
     imageUrl: '',
   },
-  setting: {
-    id: null,
-  },
+  usableApps: [],
 };
 
 const methods = (set) => ({
-  login: (staff) =>
+  authenticate: (wStation) =>
     set(() => ({
       isAuthenticated: true,
-      token: staff.token,
-      id: staff.id,
-      username: staff.username,
+      id: wStation.id,
+      token: wStation.token,
+      authenticatedBy: wStation.authenticatedBy,
+      previouslyAuthenticatedBy: wStation.previouslyAuthenticatedBy,
+      title: wStation.title,
       info: {
-        id: staff.info.id,
-        firstName: staff.info.firstName,
-        lastName: staff.info.lastName,
+        id: wStation.info.id,
+        description: wStation.info.description,
+        imageUrl: wStation.info.imageUrl,
       },
-      role: staff.role,
+      usableApps: wStation.usableApps,
     })),
   logout: () => set(() => ({ ...defaultState })),
-  updateFirstName: (firstname) =>
-    set((state) => ({ ...state, info: { ...state.info, firstName: firstname } })),
-  updateLastName: (newLastName) =>
-    set((state) => ({ ...state, info: { ...state.info, lastName: newLastName } })),
 });
 
-export const useStaffStore = create(
+export const useWorkstationStore = create(
   persist(
     (set, get) => ({
-      isAuthenticated: false,
-      token: null,
-      id: null,
-      username: '',
-      info: {
-        id: null,
-        firstName: '',
-        lastName: '',
-      },
-      role: '',
-      bears: 0,
+      ...defaultState,
       // Methods
       ...methods(set, get),
-      addABear: () => set({ bears: get().bears + 1 }),
     }),
     {
-      name: 'user-storage',
+      name: 'workstation-storage',
     },
   ),
 );

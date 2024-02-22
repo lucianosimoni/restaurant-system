@@ -8,6 +8,7 @@ import {
 
 /**
  * #### Used to check if request has a valid Bearer token
+ * adds req.loggedInStaff object for the next requests.
  * @param {Express.Request} req
  * @param {Express.Response} res
  * @param {NextFunction} next
@@ -49,7 +50,6 @@ export function authRole(allowedRoles) {
       return insufficientPermissions(res);
     }
 
-    // TODO: Is this comment good?
     // If the StaffId param is the same as the Token id, continue because it's their own data.
     if (req.params.staffId == id) {
       return next();

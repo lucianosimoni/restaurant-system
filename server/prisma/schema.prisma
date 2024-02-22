@@ -22,7 +22,6 @@ model Staff {
   sector                              Sector?          @relation(fields: [sectorId], references: [id]) // Optional Many-to-one relation to Sector
   sectorId                            Int? //✈️FK🟡
   timesheet                           StaffTimesheet[]
-  workstations                        Workstation[]
   authenticatedWorkstations           Workstation[]    @relation("Authentications")
   previouslyAuthenticatedWorkstations Workstation[]    @relation("PreviousAuthentications")
 
@@ -178,8 +177,6 @@ model Workstation {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Staff     Staff?   @relation(fields: [staffId], references: [id])
-  staffId   Int?
 }
 
 model WorkstationInfo {
