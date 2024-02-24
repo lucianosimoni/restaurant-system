@@ -105,21 +105,6 @@ function notFound(res, errorMessage = "Entry not found.") {
 }
 
 /**
- * ### _500_
- * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
- * @returns {error} _error.message_ _**"An Internal Server error occurred."**_
- */
-function internalError(
-  res,
-  errorMessage = "An Internal Server error occurred."
-) {
-  return res.status(500).json({
-    error: { message: errorMessage },
-  });
-}
-
-/**
  * ### _403_
  * @param {Express.Response} res
  * @param {string} errorMessage _(optional)_
@@ -144,6 +129,59 @@ function invalidToken(res) {
 }
 
 /**
+ * ### _500_
+ * @param {Express.Response} res
+ * @param {string} errorMessage _(optional)_
+ * @returns {error} _error.message_ _**"An Internal Server error occurred."**_
+ */
+function internalError(
+  res,
+  errorMessage = "An Internal Server error occurred."
+) {
+  return res.status(500).json({
+    error: {
+      code: "INTERNAL_ERROR",
+      message: errorMessage,
+    },
+  });
+}
+
+/**
+ * ### _500_
+ * _**"DB_ERROR"**_
+ * @param {Express.Response} res
+ * @param {string} errorMessage _(optional)_
+ * @returns {{error:{code:"UNEXPECTED_ERROR",message:"Unexpect database error."}}}
+ */
+function dbError(res, errorMessage = "Unexpect database error.") {
+  return res.status(500).json({
+    error: {
+      code: "DB_ERROR",
+      message: errorMessage,
+    },
+  });
+}
+
+/**
+ * ### _500_
+ * _**"Unexpected server error. Try again later."**_
+ * @param {Express.Response} res
+ * @param {string} errorMessage _(optional)_
+ * @returns {{error:{code:"UNEXPECTED_ERROR",message:"Unexpected server error. Try again later."}}}
+ */
+function unexpectedError(
+  res,
+  errorMessage = "Unexpected server error. Try again later."
+) {
+  return res.status(500).json({
+    error: {
+      code: "UNEXPECTED_ERROR",
+      message: errorMessage,
+    },
+  });
+}
+
+/**
  * #### Many reusable Request Responses to go.
  */
 export const Responses = {
@@ -159,4 +197,6 @@ export const Responses = {
   invalidToken,
   notFound,
   conflict,
+  dbError,
+  unexpectedError,
 };

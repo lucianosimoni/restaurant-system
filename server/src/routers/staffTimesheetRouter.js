@@ -10,7 +10,7 @@ const StaffTimesheetRouter = express.Router();
 StaffTimesheetRouter.post(
   "/auto-clock",
   authRole([...GroupedRoles.ALL_EMPLOYEES]),
-  Validate.body(["staffId", "imageUrl", "currentTime"]),
+  Validate.body(["staffId", "imageUrl", "time"]),
   async (req, res) => {
     try {
       await StaffTimesheetController.autoClock(req, res);
@@ -23,10 +23,23 @@ StaffTimesheetRouter.post(
 
 StaffTimesheetRouter.post(
   "/clock-in",
-  Validate.body(["staffId", "imageUrl", "clockInTime"]),
+  Validate.body(["staffId", "imageInUrl", "timeIn"]),
   async (req, res) => {
     try {
       await StaffTimesheetController.clockIn(req, res);
+    } catch (err) {
+      console.error(err);
+      return Responses.internalError(res);
+    }
+  }
+);
+
+StaffTimesheetRouter.post(
+  "/clock-out",
+  Validate.body(["staffTimesheetId", "imageOutUrl", "timeOut"]),
+  async (req, res) => {
+    try {
+      await StaffTimesheetController.clockOut(req, res);
     } catch (err) {
       console.error(err);
       return Responses.internalError(res);

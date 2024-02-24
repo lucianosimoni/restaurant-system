@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { Errors } from "../utils/errorsUtils.js";
 const prisma = new PrismaClient();
 
 /**
@@ -17,16 +18,14 @@ async function create(data) {
           },
         },
       },
-      include: {
-        info: true,
-      },
+      include: { info: true },
     });
 
     delete createdStaff.passwordHash;
     return createdStaff;
   } catch (err) {
     console.error(err);
-    throw err;
+    throw Errors.dbError();
   }
 }
 
@@ -54,7 +53,7 @@ async function getAll(
     return sanitizedStaff;
   } catch (err) {
     console.error(err);
-    throw err;
+    throw Errors.dbError();
   }
 }
 
@@ -67,9 +66,7 @@ async function getById(
 ) {
   try {
     const staff = await prisma.staff.findUnique({
-      where: {
-        id: staffId,
-      },
+      where: { id: staffId },
       include: {
         info: includeInfo,
         sector: includeSector,
@@ -82,7 +79,7 @@ async function getById(
     return staff;
   } catch (err) {
     console.error(err);
-    throw err;
+    throw Errors.dbError();
   }
 }
 
@@ -95,9 +92,7 @@ async function getByUsername(
 ) {
   try {
     const staff = await prisma.staff.findUnique({
-      where: {
-        username: staffUsername,
-      },
+      where: { username: staffUsername },
       include: {
         info: includeInfo,
         sector: includeSector,
@@ -110,7 +105,7 @@ async function getByUsername(
     return staff;
   } catch (err) {
     console.error(err);
-    throw err;
+    throw Errors.dbError();
   }
 }
 
@@ -131,35 +126,29 @@ async function updateById(staffId, data) {
           },
         },
       },
-      include: {
-        info: true,
-      },
+      include: { info: true },
     });
 
     delete updatedStaff.passwordHash;
     return updatedStaff;
   } catch (err) {
     console.error(err);
-    throw err;
+    throw Errors.dbError();
   }
 }
 
 async function updatePasswordById(staffId, passwordHash) {
   try {
     const updatedStaff = await prisma.staff.update({
-      where: {
-        id: staffId,
-      },
-      data: {
-        passwordHash,
-      },
+      where: { id: staffId },
+      data: { passwordHash },
     });
 
     delete updatedStaff.passwordHash;
     return updatedStaff;
   } catch (err) {
     console.error(err);
-    throw err;
+    throw Errors.dbError();
   }
 }
 
@@ -168,10 +157,12 @@ async function deleteById(staffId) {
     const deletedStaff = await prisma.staff.delete({
       where: { id: staffId },
     });
+
+    delete deletedStaff.passwordHash;
     return deletedStaff;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  } catch (err) {
+    console.error(err);
+    throw Errors.dbError();
   }
 }
 

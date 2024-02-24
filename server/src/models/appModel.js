@@ -6,40 +6,33 @@ const prisma = new PrismaClient();
  */
 async function create(data) {
   try {
-    const createdApp = await prisma.app
-      .create({
-        data: {
-          title: data.title,
-          path: data.path,
-          info: {
-            create: {
-              description: data.description,
-            },
+    const createdApp = await prisma.app.create({
+      data: {
+        title: data.title,
+        path: data.path,
+        info: {
+          create: {
+            description: data.description,
           },
         },
-        include: {
-          info: true,
-          sectors: true,
-        },
-      })
-      .then((createdApp) => {
-        delete createdApp.passwordHash;
-        return createdApp;
-      });
+      },
+      include: {
+        info: true,
+        sectors: true,
+      },
+    });
 
+    delete createdApp.passwordHash;
     return createdApp;
   } catch (err) {
+    // TODO: define how to throw errors in the Models
     throw new Error("Database error while creating new app.");
   }
 }
 
 async function getAll(includeInfo = true) {
   return await prisma.app
-    .findMany({
-      include: {
-        info: includeInfo,
-      },
-    })
+    .findMany({ include: { info: includeInfo } })
     .then((apps) => {
       return apps.map((app) => {
         const { passwordHash, ...sanitizedData } = app;
@@ -50,23 +43,15 @@ async function getAll(includeInfo = true) {
 
 async function getByTitle(appTitle, includeInfo = true) {
   return await prisma.app.findUnique({
-    where: {
-      title: appTitle,
-    },
-    include: {
-      info: includeInfo,
-    },
+    where: { title: appTitle },
+    include: { info: includeInfo },
   });
 }
 
 async function getById(appId, includeInfo = true) {
   return await prisma.app.findUnique({
-    where: {
-      id: appId,
-    },
-    include: {
-      info: includeInfo,
-    },
+    where: { id: appId },
+    include: { info: includeInfo },
   });
 }
 
@@ -82,9 +67,7 @@ async function updateById(appId, data) {
       allowedSectors: data.allowedSectors,
       info: {
         update: {
-          where: {
-            id: data.info.id,
-          },
+          where: { id: data.info.id },
           data: {
             description: data.info.description,
           },

@@ -3,28 +3,28 @@ import { Responses } from "../utils/responsesUtils.js";
 
 /**
  *
- * @param {Express.Request} req
+ * @param {{"...":Express.Request, body:{staffId:String,imageUrl:String,currentTime:Date}}} req
  * @param {Express.Response} res
- * @returns {{}}
+ * @returns {{autoRecord:{id:Number;imageInUrl:String;imageOutUrl:String|null;timeIn:Date;timeOut:Date|null;staffId:Number;createdAt:Date;updatedAt:Date;},clockedIn:Boolean}}
  */
 async function autoClock(req, res) {
-  const { staffId, imageUrl, currentTime } = req.body;
+  const { staffId, imageUrl, time } = req.body;
 
   // Verify if in UTC format
-  const dateObject = new Date(currentTime);
+  const dateObject = new Date(time);
   if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0)
-    return Responses.wrongBody(res);
+    return Responses.wrongBody(res, "UTC date expected.");
 
   // 1/2 - Get Last Record
+  console.log("getting last record 🔵");
   const lastRecord = await StaffTimesheetModel.getLastByStaffId(staffId);
 
-  // 2/2 - Last is pending: CLOCK OUT
   if (lastRecord && lastRecord.timeIn && !lastRecord.timeOut) {
     const clockedOutRecord = await StaffTimesheetModel.updateById(
       lastRecord.id,
       {
         imageOutUrl: imageUrl,
-        timeOut: currentTime,
+        timeOut: time,
       }
     );
     if (!clockedOutRecord) return Responses.internalError(res);
@@ -34,11 +34,13 @@ async function autoClock(req, res) {
       .json({ autoRecord: clockedOutRecord, clockedIn: false });
   }
 
+  // 2/2 - Last is pending: CLOCK OUT
+
   // 2/2 - Last is filled: CLOCK IN
   const clockedInRecord = await StaffTimesheetModel.create({
     staffId,
     imageInUrl: imageUrl,
-    timeIn: currentTime,
+    timeIn: time,
   });
   if (!clockedInRecord) return Responses.internalError(res);
 
@@ -46,45 +48,48 @@ async function autoClock(req, res) {
 }
 
 async function clockIn(req, res) {
-  const { staffId, imageUrl, clockInTime } = req.body;
+  const { staffId, imageInUrl, timeIn } = req.body;
 
   // Verify if in UTC format
-  const dateObject = new Date(clockInTime);
+  const dateObject = new Date(timeIn);
   if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0)
-    return Responses.wrongBody(res);
+    return Responses.wrongBody(res, "UTC date expected.");
 
-  const clockedInRecord = await StaffTimesheetModel.create({
-    staffId,
-    imageInUrl: imageUrl,
-    timeIn: clockInTime,
-  });
-  if (!clockedInRecord) return Responses.internalError(res);
+  try {
+    const clockedInRecord = await StaffTimesheetModel.create({
+      staffId,
+      imageInUrl,
+      timeIn,
+    });
 
-  return res.status(201).json({ clockedInRecord });
+    return res.status(201).json({ clockedInRecord });
+  } catch (err) {
+    return Responses.internalError(res, "Unexpected error Clocking In.");
+  }
 }
 
 async function clockOut(req, res) {
-  const { staffTimesheetId, staffId, imageUrl, clockOutTime } = req.body;
-
-  if (!staffTimesheetId || !staffId || !imageUrl || !clockOutTime) {
-    return Responses.missingBody(res);
-  }
+  const { staffTimesheetId, imageOutUrl, timeOut } = req.body;
 
   // Verify if in UTC format
   const dateObject = new Date(clockOutTime);
-  if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
-    return Responses.wrongBody(res);
+  if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0)
+    return Responses.wrongBody(res, "UTC date expected.");
+
+  try {
+    const clockedOutRecord = await StaffTimesheetModel.updateById(
+      staffTimesheetId,
+      {
+        staffTimesheetId,
+        imageOutUrl,
+        timeOut,
+      }
+    );
+
+    return res.status(201).json({ clockedOutRecord });
+  } catch (err) {
+    return Responses.internalError(res, "Unexpected error Clocking Out.");
   }
-
-  const clockedOutRecord = await updateTimeRecord({
-    staffTimesheetId,
-    staffId,
-    imageUrl,
-    time: clockOutTime,
-  });
-  if (!clockedOutRecord) return Responses.internalError(res);
-
-  return res.status(201).json({ clockedOutRecord });
 }
 
 export const StaffTimesheetController = {
