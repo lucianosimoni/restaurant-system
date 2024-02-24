@@ -1,16 +1,8 @@
 import { AppModel } from "../models/appModel.js";
-import {
-  internalError,
-  notFound,
-  missingBody,
-} from "../utils/defaultResponses.js";
+import { internalError, notFound } from "../utils/defaultResponses.js";
 
-const create = async (req, res) => {
+async function create(req, res) {
   const { title, path, description } = req.body;
-
-  if (!title || !path) {
-    return missingBody(res);
-  }
 
   const titleExists = await AppModel.getByTitle(title);
   if (titleExists) {
@@ -22,14 +14,16 @@ const create = async (req, res) => {
   const app = await AppModel.create({
     title: title,
     path: path,
-    description: description ? description : null,
+    description: description,
   });
-  if (!app) return internalError(res, "Error while creating the app.");
+  if (!app) {
+    return internalError(res, "Error while creating the app.");
+  }
 
   res.status(201).json({ createdApp: { ...app } });
-};
+}
 
-const getAll = async (req, res) => {
+async function getAll(req, res) {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const apps = await AppModel.getAll(includeInfo);
@@ -38,9 +32,9 @@ const getAll = async (req, res) => {
     console.error("Error fetching all apps: ", error);
     return internalError(res, "Error while getting all apps.");
   }
-};
+}
 
-const getById = async (req, res) => {
+async function getById(req, res) {
   const appId = req.params.appId;
 
   if (!parseInt(appId)) {
@@ -58,6 +52,22 @@ const getById = async (req, res) => {
     console.error("Error fetching app by Id: ", error);
     return internalError("Error while getting app by id.");
   }
-};
+}
 
-export const AppController = { create, getAll, getById };
+// TODO: Fix it
+async function updateById(req, res) {
+  return res.status(200).json({ todo: "yet to be implemented" });
+}
+
+// TODO: Fix it
+async function deleteById(req, res) {
+  return res.status(200).json({ todo: "yet to be implemented" });
+}
+
+export const AppController = {
+  create,
+  getAll,
+  getById,
+  updateById,
+  deleteById,
+};

@@ -36,4 +36,22 @@ AppRouter.get("/:appId", async (req, res) => {
   }
 });
 
+AppRouter.put("/:appId", async (req, res) => {
+  try {
+    await AppController.updateById(req, res);
+  } catch (err) {
+    console.error(err);
+    return internalError(res);
+  }
+});
+
+AppRouter.delete("/:appId", async (req, res) => {
+  try {
+    await AppController.deleteById(req, res);
+  } catch (err) {
+    console.error(err);
+    return internalError(res);
+  }
+});
+
 export default AppRouter;
