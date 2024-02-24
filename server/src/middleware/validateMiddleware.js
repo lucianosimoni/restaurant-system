@@ -1,4 +1,4 @@
-import { Responses } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/responsesUtils.js";
 
 /**
  * @param {[String]} expectedBody

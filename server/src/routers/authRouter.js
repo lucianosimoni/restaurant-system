@@ -1,7 +1,7 @@
 import express from "express";
 import { StaffController } from "../controllers/staffController.js";
-import { Validate } from "../middleware/validate.js";
-import { Responses } from "../utils/defaultResponses.js";
+import { Validate } from "../middleware/validateMiddleware.js";
+import { Responses } from "../utils/responsesUtils.js";
 
 const AuthRouter = express.Router();
 

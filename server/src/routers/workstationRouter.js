@@ -1,9 +1,9 @@
 import express from "express";
 import { WorkstationController } from "../controllers/workstationController.js";
-import { authRole } from "../middleware/auth.js";
-import { GroupedRoles } from "../utils/types.js";
-import { Responses } from "../utils/defaultResponses.js";
-import { Validate } from "../middleware/validate.js";
+import { authRole } from "../middleware/authMiddleware.js";
+import { GroupedRoles } from "../utils/typesUtils.js";
+import { Responses } from "../utils/responsesUtils.js";
+import { Validate } from "../middleware/validateMiddleware.js";
 
 const WorkstationRouter = express.Router();
 

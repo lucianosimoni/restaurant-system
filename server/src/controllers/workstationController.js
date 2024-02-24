@@ -1,6 +1,6 @@
 import { WorkstationModel } from "../models/workstationModel.js";
 import { AppModel } from "../models/appModel.js";
-import { Responses } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/responsesUtils.js";
 
 import jwt from "jsonwebtoken";
 import { StaffModel } from "../models/staffModel.js";

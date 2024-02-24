@@ -5,7 +5,7 @@ import compression from "compression";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocument from "../swagger.json" assert { type: "json" };
 
-import auth from "./middleware/auth.js";
+import auth from "./middleware/authMiddleware.js";
 
 import AuthRouter from "./routers/authRouter.js";
 import StaffRouter from "./routers/staffRouter.js";

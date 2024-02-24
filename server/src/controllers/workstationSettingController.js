@@ -5,7 +5,7 @@ import {
   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
 import { AppModel } from "../models/appModel.js";
-import { Responses } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/responsesUtils.js";
 
 //TODO: Remove Setting
 

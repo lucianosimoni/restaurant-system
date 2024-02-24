@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
  * @param {{username:String, passwordHash:String, firstName:String, lastName:String}} data
  */
 async function create(data) {
-  return await prisma.staff
-    .create({
+  try {
+    const createdStaff = await prisma.staff.create({
       data: {
         username: data.username,
         passwordHash: data.passwordHash,
@@ -20,11 +20,14 @@ async function create(data) {
       include: {
         info: true,
       },
-    })
-    .then((createdStaff) => {
-      delete createdStaff.passwordHash;
-      return createdStaff;
     });
+
+    delete createdStaff.passwordHash;
+    return createdStaff;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 async function getAll(
@@ -49,9 +52,9 @@ async function getAll(
     });
 
     return sanitizedStaff;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }
 
@@ -74,10 +77,12 @@ async function getById(
         sectorLeader: includeSectorLeader,
       },
     });
+
+    delete staff.passwordHash;
     return staff;
-  } catch (error) {
-    console.error(error);
-    return null;
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }
 
@@ -100,10 +105,12 @@ async function getByUsername(
         sectorLeader: includeSectorLeader,
       },
     });
+
+    delete staff.passwordHash;
     return staff;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }
 
@@ -117,7 +124,6 @@ async function updateById(staffId, data) {
       where: { id: staffId },
       data: {
         username: data.username,
-        passwordHash: data.passwordHash,
         info: {
           update: {
             firstName: data.firstName,
@@ -129,15 +135,35 @@ async function updateById(staffId, data) {
         info: true,
       },
     });
+
     delete updatedStaff.passwordHash;
     return updatedStaff;
-  } catch (error) {
-    console.error(error);
-    throw error;
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }
 
-const deleteById = async (staffId) => {
+async function updatePasswordById(staffId, passwordHash) {
+  try {
+    const updatedStaff = await prisma.staff.update({
+      where: {
+        id: staffId,
+      },
+      data: {
+        passwordHash,
+      },
+    });
+
+    delete updatedStaff.passwordHash;
+    return updatedStaff;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
+
+async function deleteById(staffId) {
   try {
     const deletedStaff = await prisma.staff.delete({
       where: { id: staffId },
@@ -147,7 +173,7 @@ const deleteById = async (staffId) => {
     console.error(error);
     throw error;
   }
-};
+}
 
 export const StaffModel = {
   create,
@@ -155,5 +181,6 @@ export const StaffModel = {
   getById,
   getByUsername,
   updateById,
+  updatePasswordById,
   deleteById,
 };

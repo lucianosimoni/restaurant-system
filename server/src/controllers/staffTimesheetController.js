@@ -1,87 +1,66 @@
 import { StaffTimesheetModel } from "../models/staffTimesheetModel.js";
-import { Responses } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/responsesUtils.js";
 
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ * @returns {{}}
+ */
 async function autoClock(req, res) {
   const { staffId, imageUrl, currentTime } = req.body;
 
-  if (!staffId || !imageUrl || !currentTime) {
-    return Responses.missingBody(res);
-  }
-
+  // Verify if in UTC format
   const dateObject = new Date(currentTime);
-  if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
+  if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0)
     return Responses.wrongBody(res);
-  }
 
-  // 🔵 Get Last Record
+  // 1/2 - Get Last Record
   const lastRecord = await StaffTimesheetModel.getLastByStaffId(staffId);
 
-  // 🔴 Last is pending: UPDATE / OUT
-  if (!lastRecord.timeOut) {
+  // 2/2 - Last is pending: CLOCK OUT
+  if (lastRecord && lastRecord.timeIn && !lastRecord.timeOut) {
     const clockedOutRecord = await StaffTimesheetModel.updateById(
       lastRecord.id,
       {
-        staffId,
-        imageUrl,
-        time: currentTime,
+        imageOutUrl: imageUrl,
+        timeOut: currentTime,
       }
     );
-    if (!clockedOutRecord) {
-      return Responses.internalError(
-        res,
-        "Error while updating timesheet record."
-      );
-    }
+    if (!clockedOutRecord) return Responses.internalError(res);
 
     return res
       .status(201)
-      .json({ autoRecord: { ...clockedOutRecord }, clockedIn: false });
+      .json({ autoRecord: clockedOutRecord, clockedIn: false });
   }
 
-  // 🟢 Last is filled: CREATE NEW / IN
-  const clockedInRecord = await createTimeRecord({
+  // 2/2 - Last is filled: CLOCK IN
+  const clockedInRecord = await StaffTimesheetModel.create({
     staffId,
-    imageUrl,
-    time: currentTime,
+    imageInUrl: imageUrl,
+    timeIn: currentTime,
   });
-  if (!clockedInRecord) {
-    return Responses.internalError(
-      res,
-      "Error while creating timesheet record."
-    );
-  }
+  if (!clockedInRecord) return Responses.internalError(res);
 
-  return res
-    .status(201)
-    .json({ autoRecord: { ...clockedInRecord }, clockedIn: true });
+  return res.status(201).json({ autoRecord: clockedInRecord, clockedIn: true });
 }
 
 async function clockIn(req, res) {
   const { staffId, imageUrl, clockInTime } = req.body;
 
-  if (!staffId || !imageUrl || !clockInTime) {
-    return Responses.missingBody(res);
-  }
-
   // Verify if in UTC format
   const dateObject = new Date(clockInTime);
-  if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
+  if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0)
     return Responses.wrongBody(res);
-  }
 
-  const clockedInRecord = await createTimeRecord({
+  const clockedInRecord = await StaffTimesheetModel.create({
     staffId,
-    imageUrl,
-    time: clockInTime,
+    imageInUrl: imageUrl,
+    timeIn: clockInTime,
   });
-  if (!clockedInRecord) {
-    return Responses.internalError(
-      res,
-      "Error while creating timesheet record."
-    );
-  }
+  if (!clockedInRecord) return Responses.internalError(res);
 
-  return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
+  return res.status(201).json({ clockedInRecord });
 }
 
 async function clockOut(req, res) {
@@ -91,25 +70,21 @@ async function clockOut(req, res) {
     return Responses.missingBody(res);
   }
 
+  // Verify if in UTC format
   const dateObject = new Date(clockOutTime);
   if (isNaN(dateObject) || dateObject.getTimezoneOffset() !== 0) {
     return Responses.wrongBody(res);
   }
 
-  const clockedInRecord = await updateTimeRecord({
+  const clockedOutRecord = await updateTimeRecord({
     staffTimesheetId,
     staffId,
     imageUrl,
     time: clockOutTime,
   });
-  if (!clockedInRecord) {
-    return Responses.internalError(
-      res,
-      "Error while clocking out timesheet record."
-    );
-  }
+  if (!clockedOutRecord) return Responses.internalError(res);
 
-  return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
+  return res.status(201).json({ clockedOutRecord });
 }
 
 export const StaffTimesheetController = {

@@ -1,7 +1,7 @@
 import express from "express";
 import { AppController } from "../controllers/appController.js";
-import { Responses } from "../utils/defaultResponses.js";
-import { Validate } from "../middleware/validate.js";
+import { Responses } from "../utils/responsesUtils.js";
+import { Validate } from "../middleware/validateMiddleware.js";
 
 const AppRouter = express.Router();
 

@@ -1,14 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-// TODO: Transform whole file into one object export as in the controllers/
-
 /**
  * @param {{imageInUrl:String, timeIn:Date, staffId:String}} data
  */
 async function create(data) {
-  return await prisma.staffTimesheet
-    .create({
+  try {
+    const createdRecord = await prisma.staffTimesheet.create({
       data: {
         imageInUrl: data.imageUrl,
         timeIn: data.time,
@@ -21,22 +19,38 @@ async function create(data) {
       include: {
         staff: false,
       },
-    })
-    .then((createdRecord) => createdRecord);
+    });
+
+    return createdRecord;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 async function getAllByStaffId(staffId) {
-  return await prisma.staffTimesheet.findMany({
-    where: {
-      staffId: staffId,
-    },
-    orderBy: {
-      timeIn: "desc",
-    },
-  });
+  try {
+    const allRecords = await prisma.staffTimesheet.findMany({
+      where: {
+        staffId: staffId,
+      },
+      orderBy: {
+        timeIn: "desc",
+      },
+    });
+    return allRecords;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 async function getLastByStaffId(staffId) {
+  try {
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
   return await prisma.staffTimesheet.findFirst({
     where: {
       staffId: staffId,

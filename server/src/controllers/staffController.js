@@ -1,6 +1,6 @@
 import { StaffModel } from "../models/staffModel.js";
-import { Responses } from "../utils/defaultResponses.js";
-import { RoleTypes as role } from "../utils/types.js";
+import { Responses } from "../utils/responsesUtils.js";
+import { RoleTypes as role } from "../utils/typesUtils.js";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -9,14 +9,10 @@ async function login(req, res) {
   const { username, password } = req.body;
 
   const staff = await StaffModel.getByUsername(username);
-  if (!staff) {
-    return Responses.wrongPasswordOrUsername(res);
-  }
+  if (!staff) return Responses.wrongPasswordOrUsername(res);
 
   const isPasswordValid = await bcrypt.compare(password, staff.passwordHash);
-  if (!isPasswordValid) {
-    return Responses.wrongPasswordOrUsername(res);
-  }
+  if (!isPasswordValid) return Responses.wrongPasswordOrUsername(res);
 
   delete staff.passwordHash;
 
@@ -46,26 +42,21 @@ async function loginWorkstation(req, res) {
   const { username, password } = req.body;
 
   const staff = await StaffModel.getByUsername(username);
-  if (!staff) {
-    return Responses.wrongPasswordOrUsername(res);
-  }
+  if (!staff) return Responses.wrongPasswordOrUsername(res);
 
   const isPasswordValid = await bcrypt.compare(password, staff.passwordHash);
-  if (!isPasswordValid) {
-    return Responses.wrongPasswordOrUsername(res);
-  }
+  if (!isPasswordValid) return Responses.wrongPasswordOrUsername(res);
 
   delete staff.passwordHash;
 
   const allowedRole = [role.SECTOR_LEADER, role.MANAGER, role.OWNER].includes(
     staff.role
   );
-  if (!allowedRole) {
+  if (!allowedRole)
     return Responses.insufficientPermissions(
       res,
       "Insufficient role permissions to create a workstation."
     );
-  }
 
   // Create a JWT token with 10 minutes validity
   const token = jwt.sign(
@@ -86,12 +77,10 @@ async function create(req, res) {
   const { username, password, firstName, lastName } = req.body;
 
   const usernameExists = await StaffModel.getByUsername(username);
-  if (usernameExists) {
-    res.status(409).json({
+  if (usernameExists)
+    return res.status(409).json({
       error: { message: "Account with entered Username already exists." },
     });
-    return;
-  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -101,9 +90,8 @@ async function create(req, res) {
     firstName: firstName,
     lastName: lastName,
   });
-  if (!staff) {
+  if (!staff)
     return Responses.internalError(res, "Error while creating the staff.");
-  }
 
   res.status(201).json({ createdStaff: { ...staff } });
 }
@@ -120,19 +108,16 @@ async function getAll(req, res) {
 }
 
 async function getById(req, res) {
-  const staffId = req.params.staffId;
+  const staffId = parseInt(req.params.staffId);
 
-  if (!parseInt(staffId))
-    return res.status(400).json({ error: "Missing staff ID." });
+  if (!staffId) return Responses.notFound(res, "Staff ID not found.");
 
   try {
     // TODO: Work in a docs for these queries then allow them.
     // const includeInfo = req.query["include-info"] === "true";
     const staff = await StaffModel.getById(parseInt(staffId));
-    if (!staff) {
-      return Responses.notFound(res);
-    }
-    delete staff.passwordHash;
+    if (!staff) return Responses.notFound(res);
+
     return res.status(200).json({ staff });
   } catch (error) {
     console.error("Error fetching user by Id: ", error);
@@ -141,21 +126,16 @@ async function getById(req, res) {
 }
 
 async function updateById(req, res) {
-  const { username, password, firstName, lastName } = req.body;
+  const staffId = parseInt(req.params.staffId);
+  const { username, firstName, lastName } = req.body;
+
+  if (!staffId) return Responses.notFound(res, "Staff ID not found.");
 
   // TODO: Add a way to update the user ROLE, maybe a separated endpoint?
 
-  const staffId = parseInt(req.params.staffId);
-
-  if (!staffId) {
-    return Responses.notFound(res, "Staff ID not found.");
-  }
-
   try {
     const staffById = await StaffModel.getById(parseInt(staffId));
-    if (!staffById) {
-      return Responses.notFound(res, "Staff not found.");
-    }
+    if (!staffById) return Responses.notFound(res, "Staff not found.");
 
     // Check if new username is available
     if (username != staffById.username) {
@@ -164,40 +144,49 @@ async function updateById(req, res) {
         return Responses.conflict(res, "Username already in use.");
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-
     const updatedStaff = await StaffModel.updateById(staffId, {
       username,
-      passwordHash,
       firstName,
       lastName,
     });
-
     return res.status(200).json({ updatedStaff });
-  } catch (error) {
-    console.error("Error updating staff: ", error);
+  } catch (err) {
+    console.error("Error updating staff: ", err);
     return Responses.internalError(res, "Error while updating staff.");
   }
 }
 
-async function deleteById(req, res) {
+async function updatePasswordById(req, res) {
+  const staffId = parseInt(req.params.staffId);
+  const password = req.body.password;
+
+  if (!staffId) return Responses.notFound(res, "Staff ID not found.");
+
   try {
-    const { staffId } = req.params;
-    // Check if staffId is valid
-    if (!parseInt(staffId)) {
-      return res.status(400).json({ error: "Invalid staff ID." });
-    }
+    const passwordHash = await bcrypt.hash(password, 10);
+    const updatedStaff = await StaffModel.updatePasswordById(
+      staffId,
+      passwordHash
+    );
+    return res.status(200).json({ updatedStaff });
+  } catch (err) {
+    console.error("Error updating staff: ", err);
+    return Responses.internalError(res, "Error while updating staff password.");
+  }
+}
 
-    // Check if staff exists
+async function deleteById(req, res) {
+  const { staffId } = parseInt(req.params);
+
+  if (!staffId) return Responses.notFound(res, "Staff ID not found.");
+
+  try {
     const staff = await StaffModel.getById(parseInt(staffId));
-    if (!staff) {
-      return Responses.notFound(res);
-    }
+    if (!staff) return Responses.notFound(res);
 
-    // Delete the staff
-    await StaffModel.deleteById(parseInt(staffId));
+    const deletedStaff = await StaffModel.deleteById(parseInt(staffId));
 
-    return res.status(204).end();
+    return res.status(200).json({ deletedStaff });
   } catch (error) {
     console.error("Error deleting staff: ", error);
     return Responses.internalError(res, "Error while deleting staff.");
@@ -211,5 +200,6 @@ export const StaffController = {
   getAll,
   getById,
   updateById,
+  updatePasswordById,
   deleteById,
 };

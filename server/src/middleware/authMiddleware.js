@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { Responses } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/responsesUtils.js";
 
 /**
  * #### Used to check if request has a valid Bearer token
