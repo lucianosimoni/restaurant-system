@@ -30,7 +30,7 @@ function unexpectedError(
   });
 }
 
-export const Erros = {
+export const Errors = {
   dbError,
   unexpectedError,
 };

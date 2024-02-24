@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { Erros } from "../utils/errorsUtils.js";
+import { Errors } from "../utils/errorsUtils.js";
 const prisma = new PrismaClient();
 
 /**
@@ -23,7 +23,7 @@ async function create(data) {
     return createdRecord;
   } catch (err) {
     console.error("Error creating timesheet record.", err);
-    throw Erros.dbError(res);
+    throw Errors.dbError(res);
   }
 }
 
@@ -37,7 +37,7 @@ async function getAllByStaffId(staffId) {
     return allRecords;
   } catch (err) {
     console.error("Error getting all timesheet records by staffId.", err);
-    throw Erros.dbError(res);
+    throw Errors.dbError(res);
   }
 }
 
@@ -51,7 +51,7 @@ async function getLastByStaffId(staffId) {
     return lastRecord;
   } catch (err) {
     console.error("Error getting last timesheet record by staffId.", err);
-    throw Erros.dbError(res);
+    throw Errors.dbError(res);
   }
 }
 
@@ -74,7 +74,7 @@ async function updateById(staffTimesheetId, isClockIn, data) {
       return updatedRecord;
     } catch (err) {
       console.error("Error updating clockIn timesheet record by staffId.", err);
-      throw Erros.dbError(res);
+      throw Errors.dbError(res);
     }
   }
   // Clock out update
@@ -90,7 +90,7 @@ async function updateById(staffTimesheetId, isClockIn, data) {
     return updatedRecord;
   } catch (err) {
     console.error("Error updating clockOut timesheet record by staffId.", err);
-    throw Erros.dbError(res);
+    throw Errors.dbError(res);
   }
 }
 
@@ -103,7 +103,7 @@ async function deleteById(staffTimesheetId) {
     return deletedRecord;
   } catch (err) {
     console.error("Error deleting timesheet record by id.", err);
-    throw Erros.dbError(res);
+    throw Errors.dbError(res);
   }
 }
 
