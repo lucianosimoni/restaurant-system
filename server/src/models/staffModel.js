@@ -51,7 +51,7 @@ async function getAll(
     return sanitizedStaff;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
 
@@ -103,12 +103,12 @@ async function getByUsername(
     return staff;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
 
 /**
- * @param {String} staffId
+ * @param {Int} staffId
  * @param {{username:String, passwordHash:String, firstName:String, lastName:String}} data
  */
 async function updateById(staffId, data) {
@@ -133,7 +133,7 @@ async function updateById(staffId, data) {
     return updatedStaff;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 }
 
@@ -145,7 +145,7 @@ const deleteById = async (staffId) => {
     return deletedStaff;
   } catch (error) {
     console.error(error);
-    return null;
+    throw error;
   }
 };
 

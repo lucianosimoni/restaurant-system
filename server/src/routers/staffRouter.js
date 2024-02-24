@@ -69,6 +69,7 @@ StaffRouter.put(
 StaffRouter.delete(
   "/:staffId",
   authRole({ allowedRoles: [...GroupedRoles.MANAGER_OWNER], useStaffId: true }),
+  Validate.params(["staffId"]),
   async (req, res) => {
     try {
       await StaffController.deleteById(req, res);

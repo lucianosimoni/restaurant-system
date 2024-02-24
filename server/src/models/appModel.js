@@ -71,7 +71,7 @@ async function getById(appId, includeInfo = true) {
 }
 
 /**
- * @param {String} appId
+ * @param {Int} appId
  * @param {{title:String, allowedSectors:Array<String>, info:{id:String, description:String} }} data
  */
 async function updateById(appId, data) {
@@ -104,4 +104,5 @@ export const AppModel = {
   getByTitle,
   getById,
   updateById,
+  deleteById,
 };

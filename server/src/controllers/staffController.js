@@ -5,7 +5,7 @@ import { RoleTypes as role } from "../utils/types.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const login = async (req, res) => {
+async function login(req, res) {
   const { username, password } = req.body;
 
   const staff = await StaffModel.getByUsername(username);
@@ -32,7 +32,7 @@ const login = async (req, res) => {
     token,
   };
   return res.status(200).json({ loggedInStaff: loggedInStaff });
-};
+}
 
 /**
  * #### Made to login into Workstations, because only a selected type of Roles must be allowed to create one.
@@ -42,7 +42,7 @@ const login = async (req, res) => {
  * @param {Express.Response} res
  * @returns {createdWorkstationSetting}
  */
-const loginWorkstation = async (req, res) => {
+async function loginWorkstation(req, res) {
   const { username, password } = req.body;
 
   const staff = await StaffModel.getByUsername(username);
@@ -67,20 +67,23 @@ const loginWorkstation = async (req, res) => {
     );
   }
 
+  // Create a JWT token with 10 minutes validity
+  const token = jwt.sign(
+    { id: staff.id, username: staff.username, role: staff.role },
+    process.env.JWT_SECRET,
+    { expiresIn: "10m" }
+  );
+
   const loggedInStaff = {
     id: staff.id,
     role: staff.role,
     username: staff.username,
   };
-  return res.status(200).json({ loggedInStaff: loggedInStaff });
-};
+  return res.status(200).json({ loggedInStaff, token });
+}
 
-const create = async (req, res) => {
+async function create(req, res) {
   const { username, password, firstName, lastName } = req.body;
-
-  if (!username || !password || !firstName || !lastName) {
-    return Responses.missingBody(res);
-  }
 
   const usernameExists = await StaffModel.getByUsername(username);
   if (usernameExists) {
@@ -103,9 +106,9 @@ const create = async (req, res) => {
   }
 
   res.status(201).json({ createdStaff: { ...staff } });
-};
+}
 
-const getAll = async (req, res) => {
+async function getAll(req, res) {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const allStaff = await StaffModel.getAll(includeInfo);
@@ -114,51 +117,60 @@ const getAll = async (req, res) => {
     console.error("Error fetching all staff: ", error);
     return Responses.internalError(res, "Error while getting all staff.");
   }
-};
+}
 
-const getById = async (req, res) => {
+async function getById(req, res) {
   const staffId = req.params.staffId;
 
   if (!parseInt(staffId))
     return res.status(400).json({ error: "Missing staff ID." });
 
   try {
-    const includeInfo = req.query["include-info"] === "true";
-    const staff = await StaffModel.getById(parseInt(staffId), includeInfo);
-    if (!staff) {
-      return Responses.notFound(res);
-    }
-    return res.status(200).json({ staff: staff });
-  } catch (error) {
-    console.error("Error fetching user by Id: ", error);
-    return Responses.internalError("Error while getting user by id.");
-  }
-};
-
-const updateById = async (req, res) => {
-  const { username, password, firstName, lastName, role } = req.body;
-  if (!username || !password || !firstName || !lastName) {
-    return Responses.missingBody(res);
-  }
-  // TODO: Add a way to update the user role, maybe a separated endpoint?
-  // TODO: FUCKING HASH THE FUCKING PASSWORD AGAIn
-
-  const staffId = req.params.staffId;
-
-  if (!parseInt(staffId)) {
-    return Responses.notFound(res, "Staff ID not found.");
-  }
-
-  try {
+    // TODO: Work in a docs for these queries then allow them.
+    // const includeInfo = req.query["include-info"] === "true";
     const staff = await StaffModel.getById(parseInt(staffId));
     if (!staff) {
       return Responses.notFound(res);
     }
+    delete staff.passwordHash;
+    return res.status(200).json({ staff });
+  } catch (error) {
+    console.error("Error fetching user by Id: ", error);
+    return Responses.internalError("Error while getting user by id.");
+  }
+}
 
-    // Update the staff
-    const updatedStaff = await StaffModel.updateById({
-      ...staff,
-      ...req.body,
+async function updateById(req, res) {
+  const { username, password, firstName, lastName } = req.body;
+
+  // TODO: Add a way to update the user ROLE, maybe a separated endpoint?
+
+  const staffId = parseInt(req.params.staffId);
+
+  if (!staffId) {
+    return Responses.notFound(res, "Staff ID not found.");
+  }
+
+  try {
+    const staffById = await StaffModel.getById(parseInt(staffId));
+    if (!staffById) {
+      return Responses.notFound(res, "Staff not found.");
+    }
+
+    // Check if new username is available
+    if (username != staffById.username) {
+      const usernameTaken = await StaffModel.getByUsername(username);
+      if (usernameTaken)
+        return Responses.conflict(res, "Username already in use.");
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const updatedStaff = await StaffModel.updateById(staffId, {
+      username,
+      passwordHash,
+      firstName,
+      lastName,
     });
 
     return res.status(200).json({ updatedStaff });
@@ -166,10 +178,11 @@ const updateById = async (req, res) => {
     console.error("Error updating staff: ", error);
     return Responses.internalError(res, "Error while updating staff.");
   }
-};
+}
 
-const deleteById = async (staffId, req, res) => {
+async function deleteById(req, res) {
   try {
+    const { staffId } = req.params;
     // Check if staffId is valid
     if (!parseInt(staffId)) {
       return res.status(400).json({ error: "Invalid staff ID." });
@@ -189,8 +202,8 @@ const deleteById = async (staffId, req, res) => {
     console.error("Error deleting staff: ", error);
     return Responses.internalError(res, "Error while deleting staff.");
   }
-};
-
+}
+//
 export const StaffController = {
   login,
   loginWorkstation,

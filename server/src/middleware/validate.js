@@ -6,11 +6,8 @@ import { Responses } from "../utils/defaultResponses.js";
  */
 function body(expectedBody = []) {
   return function (req, res, next) {
-    const missingProperties = expectedBody.filter((prop) => !req.body[prop]);
-
-    if (missingProperties.length > 0) {
-      return Responses.missingBody(res);
-    }
+    const missing = expectedBody.find((prop) => req.body[prop] === undefined);
+    if (missing) return Responses.missingBody(res);
 
     next();
   };
@@ -21,14 +18,12 @@ function body(expectedBody = []) {
  * @returns { next } _**next()**_ or  _**Responses.missingBody()**_
  */
 function params(expectedParams = []) {
+  // TODO: Does not make much sense to have it. "validating the existence of a parameter in the URL path is generally unnecessary, as the framework enforces its presence based on the route definition."
   return function (req, res, next) {
-    const missingParameters = expectedParams.filter(
-      (param) => !req.params[param]
+    const missing = expectedParams.find(
+      (param) => req.params[param] === undefined
     );
-
-    if (missingParameters.length > 0) {
-      return Responses.missingParams(res);
-    }
+    if (missing) return Responses.missingParams(res);
 
     next();
   };

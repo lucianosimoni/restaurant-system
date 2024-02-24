@@ -10,7 +10,7 @@ import { StaffModel } from "../models/staffModel.js";
  * @param {Express.Response} res
  * @returns {createdWorkstationSetting}
  */
-const create = async (req, res) => {
+async function create(req, res) {
   const { title, usableApps, authenticatedById, description, imageUrl } =
     req.body;
 
@@ -59,9 +59,9 @@ const create = async (req, res) => {
       token,
     },
   });
-};
+}
 
-const getAll = async (req, res) => {
+async function getAll(req, res) {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const workstations = await await WorkstationModel.getAll(includeInfo);
@@ -75,9 +75,9 @@ const getAll = async (req, res) => {
       "Error while getting all workstations."
     );
   }
-};
+}
 
-const getById = async (req, res) => {
+async function getById(req, res) {
   const workstationId = req.params.workstationId;
 
   if (!parseInt(workstationId)) {
@@ -98,9 +98,9 @@ const getById = async (req, res) => {
     console.error("Error fetching workstation by Id: ", error);
     return Responses.internalError("Error while getting workstation by id.");
   }
-};
+}
 
-const updateById = async (req, res) => {
+async function updateById(req, res) {
   const workstationId = req.params.workstationId;
   const { title, description, imageUrl, usableApps } = req.body;
 
@@ -124,9 +124,9 @@ const updateById = async (req, res) => {
     console.error("Error updating workstation: ", error);
     return Responses.internalError(res, "Error while updating workstation.");
   }
-};
+}
 
-const deleteById = async (req, res) => {
+async function deleteById(req, res) {
   const workstationId = req.params.workstationId;
 
   try {
@@ -141,7 +141,7 @@ const deleteById = async (req, res) => {
     console.error("Error deleting workstation: ", error);
     return Responses.internalError(res, "Error while deleting workstation.");
   }
-};
+}
 
 export const WorkstationController = {
   create,
