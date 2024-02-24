@@ -56,6 +56,8 @@ async function getById(req, res) {
 
 // TODO: Fix it
 async function updateById(req, res) {
+  const { title, path, info, allowedSectors } = req.body;
+
   return res.status(200).json({ todo: "yet to be implemented" });
 }
 

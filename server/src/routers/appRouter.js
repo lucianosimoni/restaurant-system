@@ -1,13 +1,13 @@
 import express from "express";
 import { AppController } from "../controllers/appController.js";
 import { internalError } from "../utils/defaultResponses.js";
-import validateBody from "../middleware/validateBody.js";
+import { Validate } from "../middleware/validate.js";
 
 const AppRouter = express.Router();
 
 AppRouter.post(
   "/",
-  validateBody(["title", "path", "description"]),
+  Validate.body(["title", "path", "description"]),
   async (req, res) => {
     try {
       await AppController.create(req, res);
@@ -36,14 +36,18 @@ AppRouter.get("/:appId", async (req, res) => {
   }
 });
 
-AppRouter.put("/:appId", async (req, res) => {
-  try {
-    await AppController.updateById(req, res);
-  } catch (err) {
-    console.error(err);
-    return internalError(res);
+AppRouter.put(
+  "/:appId",
+  Validate.body(["title", "path", "info", "allowedSectors"]),
+  async (req, res) => {
+    try {
+      await AppController.updateById(req, res);
+    } catch (err) {
+      console.error(err);
+      return internalError(res);
+    }
   }
-});
+);
 
 AppRouter.delete("/:appId", async (req, res) => {
   try {

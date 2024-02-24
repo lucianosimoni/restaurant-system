@@ -3,14 +3,14 @@ import { WorkstationController } from "../controllers/workstationController.js";
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
-import validateBody from "../middleware/validateBody.js";
+import { Validate } from "../middleware/validate.js";
 
 const WorkstationRouter = express.Router();
 
 WorkstationRouter.post(
   "/",
   authRole([...GroupedRoles.ALL_BUT_EMPLOYEE]),
-  validateBody([
+  Validate.body([
     "title",
     "usableApps",
     "authenticatedBy",

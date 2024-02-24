@@ -3,12 +3,14 @@ import { StaffTimesheetController } from "../controllers/staffTimesheetControlle
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
+import { Validate } from "../middleware/validate.js";
 
 const StaffTimesheetRouter = express.Router();
 
 StaffTimesheetRouter.post(
   "/auto-clock",
   authRole([...GroupedRoles.ALL_EMPLOYEES]),
+  Validate.body(["staffId", "imageUrl", "currentTime"]),
   async (req, res) => {
     try {
       await StaffTimesheetController.autoClock(req, res);

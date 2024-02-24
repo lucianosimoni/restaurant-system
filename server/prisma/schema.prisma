@@ -146,6 +146,7 @@ model App {
   info           AppInfo       @relation(fields: [infoId], references: [id])
   infoId         Int           @unique //✈️FK🟡
   allowedSectors Sector[]
+  // TODO: Change to usedAtWorkstations
   workstations   Workstation[]
 
   createdAt DateTime @default(now())

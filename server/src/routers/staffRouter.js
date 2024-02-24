@@ -3,7 +3,7 @@ import { StaffController } from "../controllers/staffController.js";
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
-import validateBody from "../middleware/validateBody.js";
+import { Validate } from "../middleware/validate.js";
 
 const StaffRouter = express.Router();
 
@@ -15,7 +15,7 @@ are located in the routers/auth.js
 StaffRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
-  validateBody(["username", "password", "firstName", "lastName"]),
+  Validate.body(["username", "password", "firstName", "lastName"]),
   async (req, res) => {
     try {
       await StaffController.create(req, res);
@@ -55,7 +55,7 @@ StaffRouter.get(
 StaffRouter.put(
   "/:staffId",
   authRole([...GroupedRoles.MANAGER_OWNER]),
-  validateBody(["username", "password", "firstName", "lastName"]),
+  Validate.body(["username", "password", "firstName", "lastName"]),
   async (req, res) => {
     try {
       await StaffController.updateById(req, res);

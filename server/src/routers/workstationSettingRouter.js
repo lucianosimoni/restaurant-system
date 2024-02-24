@@ -3,7 +3,7 @@ import { WorkstationSettingController } from "../controllers/workstationSettingC
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
 import { internalError } from "../utils/defaultResponses.js";
-import validateBody from "../middleware/validateBody.js";
+import { Validate } from "../middleware/validate.js";
 
 //TODO: Remove Setting
 
@@ -12,7 +12,7 @@ const WorkstationSettingRouter = express.Router();
 WorkstationSettingRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
-  validateBody(["title", "description", "apps"]),
+  Validate.body(["title", "description", "apps"]),
   async (req, res) => {
     try {
       await WorkstationSettingController.create(req, res);

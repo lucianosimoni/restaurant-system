@@ -1,6 +1,6 @@
 import express from "express";
 import { StaffController } from "../controllers/staffController.js";
-import validateBody from "../middleware/validateBody.js";
+import { Validate } from "../middleware/validate.js";
 
 const AuthRouter = express.Router();
 
@@ -11,13 +11,13 @@ do not require JWT auth, like: Login & Register Request
 
 AuthRouter.post(
   "/staff/login",
-  validateBody(["username", "password"]),
+  Validate.body(["username", "password"]),
   StaffController.login
 );
 
 AuthRouter.post(
   "/workstation/login",
-  validateBody(["username", "password"]),
+  Validate.body(["username", "password"]),
   StaffController.loginWorkstation
 );
 
