@@ -2,7 +2,7 @@ import express from "express";
 import { WorkstationController } from "../controllers/workstationController.js";
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
-import { internalError } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 import { Validate } from "../middleware/validate.js";
 
 const WorkstationRouter = express.Router();
@@ -22,7 +22,7 @@ WorkstationRouter.post(
       await WorkstationController.create(req, res);
     } catch (err) {
       console.error(err);
-      internalError(res);
+      Responses.internalError(res);
     }
   }
 );
@@ -35,7 +35,7 @@ WorkstationRouter.get(
       await WorkstationController.getAll(req, res);
     } catch (err) {
       console.error(err);
-      internalError(res);
+      Responses.internalError(res);
     }
   }
 );
@@ -45,7 +45,7 @@ WorkstationRouter.get("/:workstationId", async (req, res) => {
     await WorkstationController.getById(req, res);
   } catch (err) {
     console.error(err);
-    internalError(res);
+    Responses.internalError(res);
   }
 });
 
@@ -57,7 +57,7 @@ WorkstationRouter.put(
       await WorkstationController.update(req, res);
     } catch (err) {
       console.error(err);
-      internalError(res);
+      Responses.internalError(res);
     }
   }
 );
@@ -70,7 +70,7 @@ WorkstationRouter.delete(
       await WorkstationController.remove(req, res);
     } catch (err) {
       console.error(err);
-      internalError(res);
+      Responses.internalError(res);
     }
   }
 );

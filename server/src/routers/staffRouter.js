@@ -2,7 +2,7 @@ import express from "express";
 import { StaffController } from "../controllers/staffController.js";
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
-import { internalError } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 import { Validate } from "../middleware/validate.js";
 
 const StaffRouter = express.Router();
@@ -21,7 +21,7 @@ StaffRouter.post(
       await StaffController.create(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );
@@ -34,7 +34,7 @@ StaffRouter.get(
       await StaffController.getAll(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );
@@ -47,7 +47,7 @@ StaffRouter.get(
       await StaffController.getById(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );
@@ -61,7 +61,7 @@ StaffRouter.put(
       await StaffController.updateById(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );
@@ -74,7 +74,7 @@ StaffRouter.delete(
       await StaffController.deleteById(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );

@@ -145,3 +145,21 @@ export function insufficientPermissions(
 export function invalidToken(res) {
   return res.status(401).json({ error: { message: "Invalid token." } });
 }
+
+/**
+ * #### Many reusable Request Responses to go.
+ */
+export const Responses = {
+  missingAuth,
+  missingBearer,
+  missingBody,
+  missingParams,
+  missingQuery,
+  wrongBody,
+  wrongPasswordOrUsername,
+  insufficientPermissions,
+  internalError,
+  invalidToken,
+  notFound,
+  conflict,
+};

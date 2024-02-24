@@ -1,6 +1,6 @@
 import express from "express";
 import { AppController } from "../controllers/appController.js";
-import { internalError } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 import { Validate } from "../middleware/validate.js";
 
 const AppRouter = express.Router();
@@ -13,7 +13,7 @@ AppRouter.post(
       await AppController.create(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );
@@ -23,7 +23,7 @@ AppRouter.get("/", async (req, res) => {
     await AppController.getAll(req, res);
   } catch (err) {
     console.error(err);
-    return internalError(res);
+    return Responses.internalError(res);
   }
 });
 
@@ -32,7 +32,7 @@ AppRouter.get("/:appId", async (req, res) => {
     await AppController.getById(req, res);
   } catch (err) {
     console.error(err);
-    return internalError(res);
+    return Responses.internalError(res);
   }
 });
 
@@ -44,7 +44,7 @@ AppRouter.put(
       await AppController.updateById(req, res);
     } catch (err) {
       console.error(err);
-      return internalError(res);
+      return Responses.internalError(res);
     }
   }
 );
@@ -54,7 +54,7 @@ AppRouter.delete("/:appId", async (req, res) => {
     await AppController.deleteById(req, res);
   } catch (err) {
     console.error(err);
-    return internalError(res);
+    return Responses.internalError(res);
   }
 });
 
