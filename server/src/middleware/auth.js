@@ -1,10 +1,5 @@
 import jwt from "jsonwebtoken";
-import {
-  insufficientPermissions,
-  invalidToken,
-  missingAuth,
-  missingBearer,
-} from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 
 /**
  * #### Used to check if request has a valid Bearer token
@@ -17,12 +12,12 @@ import {
 export default function auth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    return missingAuth(res);
+    return Responses.missingAuth(res);
   }
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-    return missingBearer(res);
+    return Responses.missingBearer(res);
   }
 
   try {
@@ -34,7 +29,7 @@ export default function auth(req, res, next) {
     next();
   } catch (err) {
     console.error(err);
-    return invalidToken(res);
+    return Responses.invalidToken(res);
   }
 }
 
@@ -47,7 +42,7 @@ export function authRole(allowedRoles) {
   return function (req, res, next) {
     const { id, role } = req.loggedInStaff;
     if (!id || !role) {
-      return insufficientPermissions(res);
+      return Responses.insufficientPermissions(res);
     }
 
     // If the StaffId param is the same as the Token id, continue because it's their own data.
@@ -58,7 +53,7 @@ export function authRole(allowedRoles) {
     if (allowedRoles.includes(role)) {
       next();
     } else {
-      return insufficientPermissions(res);
+      return Responses.insufficientPermissions(res);
     }
   };
 }

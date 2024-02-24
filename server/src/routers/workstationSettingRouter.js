@@ -2,7 +2,7 @@ import express from "express";
 import { WorkstationSettingController } from "../controllers/workstationSettingController.js";
 import { authRole } from "../middleware/auth.js";
 import { GroupedRoles } from "../utils/types.js";
-import { internalError } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 import { Validate } from "../middleware/validate.js";
 
 //TODO: Remove Setting
@@ -18,7 +18,7 @@ WorkstationSettingRouter.post(
       await WorkstationSettingController.create(req, res);
     } catch (err) {
       console.error(err);
-      internalError(res);
+      Responses.internalError(res);
     }
   }
 );
@@ -28,7 +28,7 @@ WorkstationSettingRouter.get("/", async (req, res) => {
     await WorkstationSettingController.getAll(req, res);
   } catch (err) {
     console.error(err);
-    internalError(res);
+    Responses.internalError(res);
   }
 });
 
@@ -37,7 +37,7 @@ WorkstationSettingRouter.get("/:workstationSettingId", async (req, res) => {
     await WorkstationSettingController.getById(req, res);
   } catch (err) {
     console.error(err);
-    internalError(res);
+    Responses.internalError(res);
   }
 });
 

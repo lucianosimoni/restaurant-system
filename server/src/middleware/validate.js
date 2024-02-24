@@ -1,15 +1,15 @@
-import { missingBody, missingParams } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 
 /**
  * @param {[String]} expectedBody
- * @returns { next } _**next()**_ or  _**missingBody()**_
+ * @returns { next } _**next()**_ or  _**Responses.missingBody()**_
  */
 function body(expectedBody = []) {
   return function (req, res, next) {
     const missingProperties = expectedBody.filter((prop) => !req.body[prop]);
 
     if (missingProperties.length > 0) {
-      return missingBody(res);
+      return Responses.missingBody(res);
     }
 
     next();
@@ -18,7 +18,7 @@ function body(expectedBody = []) {
 
 /**
  * @param {[String]} expectedParams
- * @returns { next } _**next()**_ or  _**missingBody()**_
+ * @returns { next } _**next()**_ or  _**Responses.missingBody()**_
  */
 function params(expectedParams = []) {
   return function (req, res, next) {
@@ -27,7 +27,7 @@ function params(expectedParams = []) {
     );
 
     if (missingParameters.length > 0) {
-      return missingParams(res);
+      return Responses.missingParams(res);
     }
 
     next();
