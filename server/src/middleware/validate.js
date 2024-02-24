@@ -22,9 +22,11 @@ function body(expectedBody = []) {
  */
 function params(expectedParams = []) {
   return function (req, res, next) {
-    const missingParams = expectedParams.filter((param) => !req.params[param]);
+    const missingParameters = expectedParams.filter(
+      (param) => !req.params[param]
+    );
 
-    if (missingParams.length > 0) {
+    if (missingParameters.length > 0) {
       return missingParams(res);
     }
 
