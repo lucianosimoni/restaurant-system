@@ -3,7 +3,7 @@
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"Request body is missing arguments."**_
  */
-export function missingBody(res) {
+function missingBody(res) {
   return res.status(400).json({
     error: { message: "Request body is missing arguments." },
   });
@@ -14,7 +14,7 @@ export function missingBody(res) {
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"URL queries are missing arguments."**_
  */
-export function missingQuery(res) {
+function missingQuery(res) {
   return res.status(400).json({
     error: { message: "URL queries are missing arguments." },
   });
@@ -26,7 +26,7 @@ export function missingQuery(res) {
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"URL params are missing arguments."**_
  */
-export function missingParams(
+function missingParams(
   res,
   errorMessage = "URL params are missing arguments."
 ) {
@@ -41,7 +41,7 @@ export function missingParams(
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"Conflicting information found."**_
  */
-export function conflict(res, errorMessage = "Conflicting information found.") {
+function conflict(res, errorMessage = "Conflicting information found.") {
   return res.status(409).json({
     error: { message: errorMessage },
   });
@@ -52,7 +52,7 @@ export function conflict(res, errorMessage = "Conflicting information found.") {
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"Username or Password is wrong."**_
  */
-export function wrongPasswordOrUsername(res) {
+function wrongPasswordOrUsername(res) {
   return res.status(401).json({
     error: { message: "Username or Password is wrong." },
   });
@@ -64,10 +64,7 @@ export function wrongPasswordOrUsername(res) {
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"One or more Body arguments is wrong."**_
  */
-export function wrongBody(
-  res,
-  errorMessage = "One or more Body arguments is wrong."
-) {
+function wrongBody(res, errorMessage = "One or more Body arguments is wrong.") {
   return res.status(400).json({
     error: { message: errorMessage },
   });
@@ -78,7 +75,7 @@ export function wrongBody(
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"Authorization header missing."**_
  */
-export function missingAuth(res) {
+function missingAuth(res) {
   return res.status(401).json({
     error: { message: "Authorization header missing" },
   });
@@ -89,7 +86,7 @@ export function missingAuth(res) {
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"Bearer token missing."**_
  */
-export function missingBearer(res) {
+function missingBearer(res) {
   return res.status(401).json({
     error: { message: "Bearer token missing" },
   });
@@ -101,7 +98,7 @@ export function missingBearer(res) {
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"Entry not found."**_
  */
-export function notFound(res, errorMessage = "Entry not found.") {
+function notFound(res, errorMessage = "Entry not found.") {
   return res.status(404).json({
     error: { message: errorMessage },
   });
@@ -113,7 +110,7 @@ export function notFound(res, errorMessage = "Entry not found.") {
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"An Internal Server error occurred."**_
  */
-export function internalError(
+function internalError(
   res,
   errorMessage = "An Internal Server error occurred."
 ) {
@@ -128,7 +125,7 @@ export function internalError(
  * @param {string} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"Insufficient permissions."**_
  */
-export function insufficientPermissions(
+function insufficientPermissions(
   res,
   errorMessage = "Insufficient permissions."
 ) {
@@ -142,7 +139,7 @@ export function insufficientPermissions(
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"Invalid token."**_
  */
-export function invalidToken(res) {
+function invalidToken(res) {
   return res.status(401).json({ error: { message: "Invalid token." } });
 }
 

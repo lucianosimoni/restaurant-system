@@ -1,5 +1,5 @@
 import { AppModel } from "../models/appModel.js";
-import { internalError, notFound } from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 
 async function create(req, res) {
   const { title, path, description } = req.body;
@@ -17,7 +17,7 @@ async function create(req, res) {
     description: description,
   });
   if (!app) {
-    return internalError(res, "Error while creating the app.");
+    return Responses.internalError(res, "Error while creating the app.");
   }
 
   res.status(201).json({ createdApp: { ...app } });
@@ -30,7 +30,7 @@ async function getAll(req, res) {
     return res.status(200).json({ apps: apps });
   } catch (error) {
     console.error("Error fetching all apps: ", error);
-    return internalError(res, "Error while getting all apps.");
+    return Responses.internalError(res, "Error while getting all apps.");
   }
 }
 
@@ -45,12 +45,12 @@ async function getById(req, res) {
     const includeInfo = req.query["include-info"] === "true";
     const app = await AppModel.getById(parseInt(appId), includeInfo);
     if (!app) {
-      return notFound(res);
+      return Responses.notFound(res);
     }
     return res.status(200).json({ app: app });
   } catch (error) {
     console.error("Error fetching app by Id: ", error);
-    return internalError("Error while getting app by id.");
+    return Responses.internalError("Error while getting app by id.");
   }
 }
 

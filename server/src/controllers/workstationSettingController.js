@@ -5,13 +5,7 @@ import {
   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
 import { AppModel } from "../models/appModel.js";
-import {
-  internalError,
-  notFound,
-  missingBody,
-  conflict,
-  wrongBody,
-} from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 
 //TODO: Remove Setting
 
@@ -25,12 +19,12 @@ const create = async (req, res) => {
   const { title, description, apps } = req.body;
 
   if (!title) {
-    return missingBody(res);
+    return Responses.missingBody(res);
   }
 
   const titleExists = await getWorkstationSettingByTitle(title);
   if (titleExists) {
-    return conflict(
+    return Responses.conflict(
       res,
       "Workstation Setting with entered Title already exists."
     );
@@ -41,7 +35,7 @@ const create = async (req, res) => {
     apps.map(async (appId) => await AppModel.getById(appId))
   ).then((appsChecked) => appsChecked);
   if (appsChecked.some((app) => app == null)) {
-    return wrongBody(res, "One or more apps do not exist.");
+    return Responses.wrongBody(res, "One or more apps do not exist.");
   }
 
   const createdWorkstationSetting = await createWorkstationSetting({
@@ -50,7 +44,10 @@ const create = async (req, res) => {
     apps,
   });
   if (!createdWorkstationSetting) {
-    return internalError(res, "Error while creating workstation setting.");
+    return Responses.internalError(
+      res,
+      "Error while creating workstation setting."
+    );
   }
 
   return res.status(201).json({ createdWorkstationSetting });
@@ -62,7 +59,10 @@ const getAll = async (req, res) => {
     return res.status(200).json({ workstationSettings: workstationSettings });
   } catch (error) {
     console.error("Error fetching all workstationSettings: ", error);
-    return internalError(res, "Error while getting all workstationSettings.");
+    return Responses.internalError(
+      res,
+      "Error while getting all workstationSettings."
+    );
   }
 };
 
@@ -78,12 +78,14 @@ const getById = async (req, res) => {
       parseInt(workstationSettingId)
     );
     if (!workstationSetting) {
-      return notFound(res);
+      return Responses.notFound(res);
     }
     return res.status(200).json({ workstationSetting: workstationSetting });
   } catch (error) {
     console.error("Error fetching workstation setting by Id: ", error);
-    return internalError("Error while getting workstation setting by id.");
+    return Responses.internalError(
+      "Error while getting workstation setting by id."
+    );
   }
 };
 

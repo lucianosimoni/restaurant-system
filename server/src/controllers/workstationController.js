@@ -1,11 +1,6 @@
 import { WorkstationModel } from "../models/workstationModel.js";
 import { AppModel } from "../models/appModel.js";
-import {
-  conflict,
-  internalError,
-  notFound,
-  wrongBody,
-} from "../utils/defaultResponses.js";
+import { Responses } from "../utils/defaultResponses.js";
 
 import jwt from "jsonwebtoken";
 import { StaffModel } from "../models/staffModel.js";
@@ -21,7 +16,7 @@ const create = async (req, res) => {
 
   const titleExists = await getWorkstationByTitle(title);
   if (titleExists) {
-    return conflict(res, "Workstation Title already exists.");
+    return Responses.conflict(res, "Workstation Title already exists.");
   }
 
   // TODO: Check if works
@@ -30,13 +25,16 @@ const create = async (req, res) => {
     usableApps.map(async (appId) => await AppModel.getById(appId))
   ).then((appsChecked) => appsChecked);
   if (appsChecked.some((app) => app == null)) {
-    return wrongBody(res, "One or more usableApps do not exist.");
+    return Responses.wrongBody(res, "One or more usableApps do not exist.");
   }
 
   // TODO: Check if works
   const staffAuthenticated = await StaffModel.getById(authenticatedById);
   if (!staffAuthenticated) {
-    return wrongBody(res, "Body argument authenticatedById does not exist.");
+    return Responses.wrongBody(
+      res,
+      "Body argument authenticatedById does not exist."
+    );
   }
 
   const workstation = await WorkstationModel.create({
@@ -46,7 +44,10 @@ const create = async (req, res) => {
     imageUrl: imageUrl ? imageUrl : null,
   });
   if (!workstation)
-    return internalError(res, "Internal error while creating the workstation.");
+    return Responses.internalError(
+      res,
+      "Internal error while creating the workstation."
+    );
 
   const token = jwt.sign(
     { workstationId: workstation.id },
@@ -69,7 +70,10 @@ const getAll = async (req, res) => {
       .json({ workstations: await WorkstationModel.workstations });
   } catch (error) {
     console.error("Error fetching all workstations: ", error);
-    return internalError(res, "Error while getting all workstations.");
+    return Responses.internalError(
+      res,
+      "Error while getting all workstations."
+    );
   }
 };
 
@@ -87,12 +91,12 @@ const getById = async (req, res) => {
       includeInfo
     );
     if (!workstation) {
-      return notFound(res);
+      return Responses.notFound(res);
     }
     return res.status(200).json({ workstation: workstation });
   } catch (error) {
     console.error("Error fetching workstation by Id: ", error);
-    return internalError("Error while getting workstation by id.");
+    return Responses.internalError("Error while getting workstation by id.");
   }
 };
 
@@ -112,13 +116,13 @@ const updateById = async (req, res) => {
     );
 
     if (!updatedWorkstation) {
-      return notFound(res);
+      return Responses.notFound(res);
     }
 
     res.status(200).json({ updatedWorkstation });
   } catch (error) {
     console.error("Error updating workstation: ", error);
-    return internalError(res, "Error while updating workstation.");
+    return Responses.internalError(res, "Error while updating workstation.");
   }
 };
 
@@ -129,13 +133,13 @@ const deleteById = async (req, res) => {
     const deletedWorkstation = await WorkstationModel.deleteById(workstationId);
 
     if (!deletedWorkstation) {
-      return notFound(res);
+      return Responses.notFound(res);
     }
 
     res.status(204).end();
   } catch (error) {
     console.error("Error deleting workstation: ", error);
-    return internalError(res, "Error while deleting workstation.");
+    return Responses.internalError(res, "Error while deleting workstation.");
   }
 };
 
