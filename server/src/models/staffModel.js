@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-// TODO: Transform whole file into one object export as in the controllers/
-
-export async function createStaff(data) {
+/**
+ * @param {{username:String, passwordHash:String, firstName:String, lastName:String}} data
+ */
+async function create(data) {
   return await prisma.staff
     .create({
       data: {
@@ -26,59 +27,7 @@ export async function createStaff(data) {
     });
 }
 
-export async function getStaffById(
-  staffId,
-  includeInfo = true,
-  includeTimesheet = true,
-  includeSector = true,
-  includeSectorLeader = true
-) {
-  try {
-    const staff = await prisma.staff.findUnique({
-      where: {
-        id: staffId,
-      },
-      include: {
-        info: includeInfo,
-        sector: includeSector,
-        timesheet: includeTimesheet,
-        sectorLeader: includeSectorLeader,
-      },
-    });
-    return staff;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-export async function getStaffByUsername(
-  staffUsername,
-  includeInfo = true,
-  includeTimesheet = false,
-  includeSector = false,
-  includeSectorLeader = false
-) {
-  try {
-    const staff = await prisma.staff.findUnique({
-      where: {
-        username: staffUsername,
-      },
-      include: {
-        info: includeInfo,
-        sector: includeSector,
-        timesheet: includeTimesheet,
-        sectorLeader: includeSectorLeader,
-      },
-    });
-    return staff;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
-
-export async function getAllStaff(
+async function getAll(
   includeInfo = true,
   includeTimesheet = false,
   includeSector = false,
@@ -106,7 +55,63 @@ export async function getAllStaff(
   }
 }
 
-export async function updateStaffById(staffId, data) {
+async function getById(
+  staffId,
+  includeInfo = true,
+  includeTimesheet = true,
+  includeSector = true,
+  includeSectorLeader = true
+) {
+  try {
+    const staff = await prisma.staff.findUnique({
+      where: {
+        id: staffId,
+      },
+      include: {
+        info: includeInfo,
+        sector: includeSector,
+        timesheet: includeTimesheet,
+        sectorLeader: includeSectorLeader,
+      },
+    });
+    return staff;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+async function getByUsername(
+  staffUsername,
+  includeInfo = true,
+  includeTimesheet = false,
+  includeSector = false,
+  includeSectorLeader = false
+) {
+  try {
+    const staff = await prisma.staff.findUnique({
+      where: {
+        username: staffUsername,
+      },
+      include: {
+        info: includeInfo,
+        sector: includeSector,
+        timesheet: includeTimesheet,
+        sectorLeader: includeSectorLeader,
+      },
+    });
+    return staff;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+/**
+ * @param {String} staffId
+ * @param {{username:String, passwordHash:String, firstName:String, lastName:String}} data
+ */
+async function updateById(staffId, data) {
   try {
     const updatedStaff = await prisma.staff.update({
       where: { id: staffId },
@@ -132,7 +137,7 @@ export async function updateStaffById(staffId, data) {
   }
 }
 
-export async function deleteStaffById(staffId) {
+const deleteById = async (staffId) => {
   try {
     const deletedStaff = await prisma.staff.delete({
       where: { id: staffId },
@@ -142,4 +147,13 @@ export async function deleteStaffById(staffId) {
     console.error(error);
     return null;
   }
-}
+};
+
+export const StaffModel = {
+  create,
+  getAll,
+  getById,
+  getByUsername,
+  updateById,
+  deleteById,
+};

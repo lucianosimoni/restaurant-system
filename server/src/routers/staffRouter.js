@@ -11,6 +11,7 @@ const StaffRouter = express.Router();
 Login; Request Register
 are located in the routers/auth.js
 */
+
 StaffRouter.post(
   "/",
   authRole([...GroupedRoles.MANAGER_OWNER]),
@@ -54,7 +55,7 @@ StaffRouter.get(
 StaffRouter.put(
   "/:staffId",
   authRole([...GroupedRoles.MANAGER_OWNER]),
-  validateBody(["username", "firstName", "lastName"]),
+  validateBody(["username", "password", "firstName", "lastName"]),
   async (req, res) => {
     try {
       await StaffController.updateById(req, res);

@@ -1,15 +1,12 @@
-import {
-  createTimeRecord,
-  getLastRecord,
-  updateTimeRecord,
-} from "../models/staffTimesheet.js";
+import { StaffTimesheetModel } from "../models/staffTimesheetModel.js";
+
 import {
   internalError,
   missingBody,
   wrongBody,
 } from "../utils/defaultResponses.js";
 
-const autoClock = async (req, res) => {
+async function autoClock(req, res) {
   const { staffId, imageUrl, currentTime } = req.body;
 
   if (!staffId || !imageUrl || !currentTime) {
@@ -22,16 +19,18 @@ const autoClock = async (req, res) => {
   }
 
   // 🔵 Get Last Record
-  const lastRecord = await getLastRecord(staffId);
+  const lastRecord = await StaffTimesheetModel.getLastByStaffId(staffId);
 
   // 🔴 Last is pending: UPDATE / OUT
-  if (!lastRecord.imageOutUrl) {
-    const clockedOutRecord = await updateTimeRecord({
-      staffTimesheetId: lastRecord.id,
-      staffId,
-      imageUrl,
-      time: currentTime,
-    });
+  if (!lastRecord.timeOut) {
+    const clockedOutRecord = await StaffTimesheetModel.updateById(
+      lastRecord.id,
+      {
+        staffId,
+        imageUrl,
+        time: currentTime,
+      }
+    );
     if (!clockedOutRecord) {
       return internalError(res, "Error while updating timesheet record.");
     }
@@ -54,9 +53,9 @@ const autoClock = async (req, res) => {
   return res
     .status(201)
     .json({ autoRecord: { ...clockedInRecord }, clockedIn: true });
-};
+}
 
-const clockIn = async (req, res) => {
+async function clockIn(req, res) {
   const { staffId, imageUrl, clockInTime } = req.body;
 
   if (!staffId || !imageUrl || !clockInTime) {
@@ -79,9 +78,9 @@ const clockIn = async (req, res) => {
   }
 
   return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
-};
+}
 
-const clockOut = async (req, res) => {
+async function clockOut(req, res) {
   const { staffTimesheetId, staffId, imageUrl, clockOutTime } = req.body;
 
   if (!staffTimesheetId || !staffId || !imageUrl || !clockOutTime) {
@@ -104,6 +103,10 @@ const clockOut = async (req, res) => {
   }
 
   return res.status(201).json({ clockedInRecord: { ...clockedInRecord } });
-};
+}
 
-export const StaffTimesheetController = { autoClock, clockIn, clockOut };
+export const StaffTimesheetController = {
+  autoClock,
+  clockIn,
+  clockOut,
+};

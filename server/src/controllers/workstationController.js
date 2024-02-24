@@ -1,11 +1,5 @@
-import {
-  createWorkstation,
-  getAllWorkstations,
-  getWorkstationById,
-  getWorkstationByTitle,
-  deleteWorkstation,
-} from "../models/workstation.js";
-import { getAppById } from "../models/app.js";
+import { WorkstationModel } from "../models/workstationModel.js";
+import { AppModel } from "../models/appModel.js";
 import {
   conflict,
   internalError,
@@ -14,7 +8,7 @@ import {
 } from "../utils/defaultResponses.js";
 
 import jwt from "jsonwebtoken";
-import { getStaffById } from "../models/staff.js";
+import { StaffModel } from "../models/staffModel.js";
 
 /**
  * @param {{body:{title:"string",description:"string",usableApps:[1,2,3]}}} req - `Express Request` with a json body
@@ -33,19 +27,19 @@ const create = async (req, res) => {
   // TODO: Check if works
   // Check if each usable app ID exists
   const appsChecked = await Promise.all(
-    usableApps.map(async (appId) => await getAppById(appId))
+    usableApps.map(async (appId) => await AppModel.getById(appId))
   ).then((appsChecked) => appsChecked);
   if (appsChecked.some((app) => app == null)) {
     return wrongBody(res, "One or more usableApps do not exist.");
   }
 
   // TODO: Check if works
-  const staffAuthenticated = await getStaffById(authenticatedById);
+  const staffAuthenticated = await StaffModel.getById(authenticatedById);
   if (!staffAuthenticated) {
     return wrongBody(res, "Body argument authenticatedById does not exist.");
   }
 
-  const workstation = await createWorkstation({
+  const workstation = await WorkstationModel.create({
     title: title,
     usableApps: usableApps,
     description: description ? description : null,
@@ -69,8 +63,10 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const includeInfo = req.query["include-info"] === "true";
-    const workstations = await getAllWorkstations(includeInfo);
-    return res.status(200).json({ workstations: workstations });
+    const workstations = await await WorkstationModel.getAll(includeInfo);
+    return res
+      .status(200)
+      .json({ workstations: await WorkstationModel.workstations });
   } catch (error) {
     console.error("Error fetching all workstations: ", error);
     return internalError(res, "Error while getting all workstations.");
@@ -86,7 +82,7 @@ const getById = async (req, res) => {
 
   try {
     const includeInfo = req.query["include-info"] === "true";
-    const workstation = await getWorkstationById(
+    const workstation = await WorkstationModel.getById(
       parseInt(workstationId),
       includeInfo
     );
@@ -100,17 +96,20 @@ const getById = async (req, res) => {
   }
 };
 
-const update = async (req, res) => {
+const updateById = async (req, res) => {
   const workstationId = req.params.workstationId;
   const { title, description, imageUrl, usableApps } = req.body;
 
   try {
-    const updatedWorkstation = await updateWorkstation(workstationId, {
-      title,
-      description,
-      imageUrl,
-      usableApps,
-    });
+    const updatedWorkstation = await WorkstationModel.updateById(
+      workstationId,
+      {
+        title,
+        description,
+        imageUrl,
+        usableApps,
+      }
+    );
 
     if (!updatedWorkstation) {
       return notFound(res);
@@ -123,11 +122,11 @@ const update = async (req, res) => {
   }
 };
 
-const remove = async (req, res) => {
+const deleteById = async (req, res) => {
   const workstationId = req.params.workstationId;
 
   try {
-    const deletedWorkstation = await deleteWorkstation(workstationId);
+    const deletedWorkstation = await WorkstationModel.deleteById(workstationId);
 
     if (!deletedWorkstation) {
       return notFound(res);
@@ -144,6 +143,6 @@ export const WorkstationController = {
   create,
   getAll,
   getById,
-  update,
-  remove,
+  updateById,
+  deleteById,
 };

@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
-// TODO: Transform whole file into one object export as in the controllers/
-
-export async function createWorkstation(data) {
+/**
+ * @param {*} data
+ */
+async function create(data) {
   return await prisma.workstation.create({
     data: {
       title: data.title,
@@ -27,7 +28,7 @@ export async function createWorkstation(data) {
   });
 }
 
-export async function getAllWorkstations(includeInfo = true) {
+async function getAll(includeInfo = true) {
   return await prisma.workstation.findMany({
     include: {
       info: includeInfo,
@@ -35,10 +36,7 @@ export async function getAllWorkstations(includeInfo = true) {
   });
 }
 
-export async function getWorkstationByTitle(
-  workstationTitle,
-  includeInfo = true
-) {
+async function getByTitle(workstationTitle, includeInfo = true) {
   return await prisma.workstation.findUnique({
     where: {
       title: workstationTitle,
@@ -49,7 +47,7 @@ export async function getWorkstationByTitle(
   });
 }
 
-export async function getWorkstationById(workstationId, includeInfo = true) {
+async function getById(workstationId, includeInfo = true) {
   return await prisma.workstation.findUnique({
     where: {
       id: workstationId,
@@ -60,7 +58,7 @@ export async function getWorkstationById(workstationId, includeInfo = true) {
   });
 }
 
-export async function updateWorkstation(workstationId, data) {
+async function updateById(workstationId, data) {
   return await prisma.workstation.update({
     where: {
       id: workstationId,
@@ -87,10 +85,19 @@ export async function updateWorkstation(workstationId, data) {
   });
 }
 
-export async function deleteWorkstation(workstationId) {
+async function deleteById(workstationId) {
   return await prisma.workstation.delete({
     where: {
       id: workstationId,
     },
   });
 }
+
+export const WorkstationModel = {
+  create,
+  getAll,
+  getById,
+  getByTitle,
+  updateById,
+  deleteById,
+};

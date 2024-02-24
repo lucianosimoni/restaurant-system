@@ -1,9 +1,4 @@
-import {
-  createApp,
-  getAllApps,
-  getAppById,
-  getAppByTitle,
-} from "../models/app.js";
+import { AppModel } from "../models/appModel.js";
 import {
   internalError,
   notFound,
@@ -17,14 +12,14 @@ const create = async (req, res) => {
     return missingBody(res);
   }
 
-  const titleExists = await getAppByTitle(title);
+  const titleExists = await AppModel.getByTitle(title);
   if (titleExists) {
     return res.status(409).json({
       error: { message: "App with entered Title already exists." },
     });
   }
 
-  const app = await createApp({
+  const app = await AppModel.create({
     title: title,
     path: path,
     description: description ? description : null,
@@ -37,7 +32,7 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const includeInfo = req.query["include-info"] === "true";
-    const apps = await getAllApps(includeInfo);
+    const apps = await AppModel.getAll(includeInfo);
     return res.status(200).json({ apps: apps });
   } catch (error) {
     console.error("Error fetching all apps: ", error);
@@ -54,7 +49,7 @@ const getById = async (req, res) => {
 
   try {
     const includeInfo = req.query["include-info"] === "true";
-    const app = await getAppById(parseInt(appId), includeInfo);
+    const app = await AppModel.getById(parseInt(appId), includeInfo);
     if (!app) {
       return notFound(res);
     }

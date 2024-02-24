@@ -1,11 +1,4 @@
-import {
-  getStaffByUsername,
-  createStaff,
-  getAllStaff,
-  getStaffById,
-  updateStaffById,
-  deleteStaffById,
-} from "../models/staff.js";
+import { StaffModel } from "../models/staffModel.js";
 import {
   insufficientPermissions,
   internalError,
@@ -21,7 +14,7 @@ import bcrypt from "bcrypt";
 const login = async (req, res) => {
   const { username, password } = req.body;
 
-  const staff = await getStaffByUsername(username);
+  const staff = await StaffModel.getByUsername(username);
   if (!staff) {
     return wrongPasswordOrUsername(res);
   }
@@ -58,7 +51,7 @@ const login = async (req, res) => {
 const loginWorkstation = async (req, res) => {
   const { username, password } = req.body;
 
-  const staff = await getStaffByUsername(username);
+  const staff = await StaffModel.getByUsername(username);
   if (!staff) {
     return wrongPasswordOrUsername(res);
   }
@@ -70,7 +63,6 @@ const loginWorkstation = async (req, res) => {
 
   delete staff.passwordHash;
 
-  // TODO: Allow roles [SECTOR_LEADER, MANAGER, OWNER]
   const allowedRole = [role.SECTOR_LEADER, role.MANAGER, role.OWNER].includes(
     staff.role
   );
@@ -96,7 +88,7 @@ const create = async (req, res) => {
     return missingBody(res);
   }
 
-  const usernameExists = await getStaffByUsername(username);
+  const usernameExists = await StaffModel.getByUsername(username);
   if (usernameExists) {
     res.status(409).json({
       error: { message: "Account with entered Username already exists." },
@@ -106,7 +98,7 @@ const create = async (req, res) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const staff = await createStaff({
+  const staff = await StaffModel.create({
     username: username,
     passwordHash: hashedPassword,
     firstName: firstName,
@@ -122,7 +114,7 @@ const create = async (req, res) => {
 const getAll = async (req, res) => {
   try {
     const includeInfo = req.query["include-info"] === "true";
-    const allStaff = await getAllStaff(includeInfo);
+    const allStaff = await StaffModel.getAll(includeInfo);
     return res.status(200).json({ staff: allStaff });
   } catch (error) {
     console.error("Error fetching all staff: ", error);
@@ -138,7 +130,7 @@ const getById = async (req, res) => {
 
   try {
     const includeInfo = req.query["include-info"] === "true";
-    const staff = await getStaffById(parseInt(staffId), includeInfo);
+    const staff = await StaffModel.getById(parseInt(staffId), includeInfo);
     if (!staff) {
       return notFound(res);
     }
@@ -154,6 +146,7 @@ const updateById = async (req, res) => {
   if (!username || !password || !firstName || !lastName) {
     return missingBody(res);
   }
+  // TODO: Add a way to update the user role, maybe a separated endpoint?
   // TODO: FUCKING HASH THE FUCKING PASSWORD AGAIn
 
   const staffId = req.params.staffId;
@@ -163,13 +156,13 @@ const updateById = async (req, res) => {
   }
 
   try {
-    const staff = await getStaffById(parseInt(staffId));
+    const staff = await StaffModel.getById(parseInt(staffId));
     if (!staff) {
       return notFound(res);
     }
 
     // Update the staff
-    const updatedStaff = await updateStaffById({
+    const updatedStaff = await StaffModel.updateById({
       ...staff,
       ...req.body,
     });
@@ -189,13 +182,13 @@ const deleteById = async (staffId, req, res) => {
     }
 
     // Check if staff exists
-    const staff = await getStaffById(parseInt(staffId));
+    const staff = await StaffModel.getById(parseInt(staffId));
     if (!staff) {
       return notFound(res);
     }
 
     // Delete the staff
-    await deleteStaffById(parseInt(staffId));
+    await StaffModel.deleteById(parseInt(staffId));
 
     return res.status(204).end();
   } catch (error) {

@@ -4,7 +4,7 @@ import {
   getWorkstationSettingById,
   getWorkstationSettingByTitle,
 } from "../models/workstationSetting.js";
-import { getAppById } from "../models/app.js";
+import { AppModel } from "../models/appModel.js";
 import {
   internalError,
   notFound,
@@ -38,7 +38,7 @@ const create = async (req, res) => {
 
   // Check if each app exists
   const appsChecked = await Promise.all(
-    apps.map(async (appId) => await getAppById(appId))
+    apps.map(async (appId) => await AppModel.getById(appId))
   ).then((appsChecked) => appsChecked);
   if (appsChecked.some((app) => app == null)) {
     return wrongBody(res, "One or more apps do not exist.");
