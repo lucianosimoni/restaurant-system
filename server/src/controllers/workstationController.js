@@ -14,28 +14,25 @@ async function create(req, res) {
   const { title, usableApps, authenticatedById, description, imageUrl } =
     req.body;
 
-  const titleExists = await getWorkstationByTitle(title);
-  if (titleExists) {
+  const titleExists = await WorkstationModel.exist("title", title);
+  if (titleExists)
     return Responses.conflict(res, "Workstation Title already exists.");
+
+  // Reduce to array to Unique to avoid dDos attacks.
+  const uniqueAppIds = usableApps.filter(
+    (appId, index) => usableApps.indexOf(appId) == index
+  );
+  for (const appId of uniqueAppIds) {
+    const appExists = await AppModel.exist("id", appId);
+    if (!appExists)
+      return Responses.wrongBody(res, "One or more apps do not exist.");
   }
 
-  // TODO: Check if works
-  // Check if each usable app ID exists
-  const appsChecked = await Promise.all(
-    usableApps.map(async (appId) => await AppModel.getById(appId))
-  ).then((appsChecked) => appsChecked);
-  if (appsChecked.some((app) => app == null)) {
-    return Responses.wrongBody(res, "One or more usableApps do not exist.");
-  }
-
-  // TODO: Check if works
-  const staffAuthenticated = await StaffModel.getById(authenticatedById);
-  if (!staffAuthenticated) {
-    return Responses.wrongBody(
-      res,
-      "Body argument authenticatedById does not exist."
-    );
-  }
+  const staffExists = await StaffModel.exist(
+    "authenticatedBy",
+    authenticatedById
+  );
+  if (!staffExists) return Responses.wrongBody(res, "Staff id does not exist.");
 
   const workstation = await WorkstationModel.create({
     title: title,
@@ -65,80 +62,67 @@ async function getAll(req, res) {
   try {
     const includeInfo = req.query["include-info"] === "true";
     const workstations = await await WorkstationModel.getAll(includeInfo);
-    return res
-      .status(200)
-      .json({ workstations: await WorkstationModel.workstations });
-  } catch (error) {
-    console.error("Error fetching all workstations: ", error);
-    return Responses.internalError(
-      res,
-      "Error while getting all workstations."
-    );
+
+    return res.status(200).json({ workstations: workstations });
+  } catch (err) {
+    console.error(err);
+    return Responses.internalError(res, "Error getting all workstations.");
   }
 }
 
 async function getById(req, res) {
-  const workstationId = req.params.workstationId;
+  const workstationId = parseInt(req.params.workstationId);
 
-  if (!parseInt(workstationId)) {
-    return res.status(400).json({ error: "Missing workstation ID." });
-  }
+  if (!workstationId)
+    return Responses.wrongParams(res, "Invalid workstationId param.");
 
   try {
     const includeInfo = req.query["include-info"] === "true";
     const workstation = await WorkstationModel.getById(
-      parseInt(workstationId),
+      workstationId,
       includeInfo
     );
-    if (!workstation) {
-      return Responses.notFound(res);
-    }
+    if (!workstation) return Responses.notFound(res);
+
     return res.status(200).json({ workstation: workstation });
-  } catch (error) {
-    console.error("Error fetching workstation by Id: ", error);
-    return Responses.internalError("Error while getting workstation by id.");
+  } catch (err) {
+    console.error(err);
+    return Responses.internalError("Error getting workstation by id.");
   }
 }
 
 async function updateById(req, res) {
-  const workstationId = req.params.workstationId;
+  const workstationId = parseInt(req.params.workstationId);
   const { title, description, imageUrl, usableApps } = req.body;
+
+  if (!workstationId)
+    return Responses.wrongParams(res, "Invalid workstationId param.");
 
   try {
     const updatedWorkstation = await WorkstationModel.updateById(
       workstationId,
-      {
-        title,
-        description,
-        imageUrl,
-        usableApps,
-      }
+      { title, description, imageUrl, usableApps }
     );
 
-    if (!updatedWorkstation) {
-      return Responses.notFound(res);
-    }
-
     res.status(200).json({ updatedWorkstation });
-  } catch (error) {
-    console.error("Error updating workstation: ", error);
-    return Responses.internalError(res, "Error while updating workstation.");
+  } catch (err) {
+    console.error(err);
+    return Responses.internalError(res, "Error updating workstation by id.");
   }
 }
 
 async function deleteById(req, res) {
-  const workstationId = req.params.workstationId;
+  const workstationId = parseInt(req.params.workstationId);
+
+  if (!workstationId)
+    return Responses.wrongParams(res, "Invalid workstationId param.");
 
   try {
     const deletedWorkstation = await WorkstationModel.deleteById(workstationId);
 
-    if (!deletedWorkstation) {
-      return Responses.notFound(res);
-    }
-
-    res.status(204).end();
-  } catch (error) {
-    console.error("Error deleting workstation: ", error);
+    res.status(204).json({ deletedWorkstation });
+  } catch (err) {
+    console.error(err);
     return Responses.internalError(res, "Error while deleting workstation.");
   }
 }

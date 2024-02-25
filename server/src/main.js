@@ -36,6 +36,7 @@ app.use("/timesheet", auth, StaffTimesheetRouter);
 app.use("/workstation", auth, WorkstationRouter);
 app.use("/workstation-setting", auth, WorkstationSettingRouter);
 app.use("/app", auth, AppRouter);
+app.use("/*", (req, res) => res.json({ error: 404 }));
 
 app.use(
   "/docs",

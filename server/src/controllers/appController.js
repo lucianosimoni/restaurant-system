@@ -4,19 +4,18 @@ import { Responses } from "../utils/responsesUtils.js";
 async function create(req, res) {
   const { title, path, description } = req.body;
 
-  const titleExists = await AppModel.getByTitle(title);
-  if (titleExists)
-    return res.status(409).json({
-      error: { message: "App with entered Title already exists." },
-    });
+  const titleExists = await AppModel.exist("title", title);
+  if (titleExists) return Responses.conflict(res, "App title already exists.");
+
+  const pathExists = await AppModel.exist("path", path);
+  if (pathExists) return Responses.conflict(res, "App path already exists.");
 
   const app = await AppModel.create({
     title: title,
     path: path,
     description: description,
   });
-  if (!app)
-    return Responses.internalError(res, "Error while creating the app.");
+  if (!app) return Responses.internalError(res, "Error creating the app.");
 
   res.status(201).json({ createdApp: { ...app } });
 }
@@ -28,7 +27,7 @@ async function getAll(req, res) {
     return res.status(200).json({ apps });
   } catch (error) {
     console.error("Error fetching all apps: ", error);
-    return Responses.internalError(res, "Error while getting all apps.");
+    return Responses.internalError(res, "Error getting all apps.");
   }
 }
 
@@ -46,7 +45,7 @@ async function getById(req, res) {
     return res.status(200).json({ app: app });
   } catch (error) {
     console.error("Error fetching app by Id: ", error);
-    return Responses.internalError("Error while getting app by id.");
+    return Responses.internalError("Error getting app by id.");
   }
 }
 

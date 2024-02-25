@@ -11,14 +11,10 @@ import { Responses } from "../utils/responsesUtils.js";
  */
 export default function auth(req, res, next) {
   const authHeader = req.headers.authorization;
-  if (!authHeader) {
-    return Responses.missingAuth(res);
-  }
+  if (!authHeader) return Responses.missingAuth(res);
 
   const token = authHeader.split(" ")[1];
-  if (!token) {
-    return Responses.missingBearer(res);
-  }
+  if (!token) return Responses.missingToken(res);
 
   try {
     const decodedToken = jwt.verify(token, process.env.JWT_SECRET_KEY);
@@ -28,6 +24,9 @@ export default function auth(req, res, next) {
     };
     next();
   } catch (err) {
+    if (err instanceof jwt.TokenExpiredError)
+      return Responses.expiredToken(res);
+
     console.error(err);
     return Responses.invalidToken(res);
   }
@@ -41,19 +40,12 @@ export default function auth(req, res, next) {
 export function authRole(allowedRoles) {
   return function (req, res, next) {
     const { id, role } = req.loggedInStaff;
-    if (!id || !role) {
-      return Responses.insufficientPermissions(res);
-    }
+    if (!id || !role) return Responses.insufficientPermissions(res);
 
     // If the StaffId param is the same as the Token id, continue because it's their own data.
-    if (req.params.staffId == id) {
-      return next();
-    }
+    if (req.params.staffId == id) return next();
 
-    if (allowedRoles.includes(role)) {
-      next();
-    } else {
-      return Responses.insufficientPermissions(res);
-    }
+    if (allowedRoles.includes(role)) next();
+    else return Responses.insufficientPermissions(res);
   };
 }

@@ -1,49 +1,68 @@
 /**
  * ### _400_
  * @param {Express.Response} res
+ * @param {String} errorMessage _(optional)_
+ * @param {String} code _(optional)_
  * @returns {error} _error.message_ _**"Request body is missing arguments."**_
  */
-function missingBody(res) {
+function missingBody(
+  res,
+  errorMessage = "Request body is missing arguments.",
+  code = "MISSING_BODY"
+) {
   return res.status(400).json({
-    error: { message: "Request body is missing arguments." },
+    error: { code, message: errorMessage },
   });
 }
 
 /**
  * ### _400_
  * @param {Express.Response} res
+ * @param {String} errorMessage _(optional)_
+ * @param {String} code _(optional)_
  * @returns {error} _error.message_ _**"URL queries are missing arguments."**_
  */
-function missingQuery(res) {
+function missingQuery(
+  res,
+  errorMessage = "URL queries are missing arguments.",
+  code = "MISSING_QUERY"
+) {
   return res.status(400).json({
-    error: { message: "URL queries are missing arguments." },
+    error: { code, message: errorMessage },
   });
 }
 
 /**
  * ### _400_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
+ * @param {String} code _(optional)_
  * @returns {error} _error.message_ _**"URL params are missing arguments."**_
  */
 function missingParams(
   res,
-  errorMessage = "URL params are missing arguments."
+  errorMessage = "URL params are missing arguments.",
+  code = "MISSING_PARAMS"
 ) {
   return res.status(400).json({
-    error: { message: errorMessage },
+    error: { code, message: errorMessage },
   });
 }
 
 /**
  * ### _409_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
+ * @param {String} code _(optional)_
  * @returns {error} _error.message_ _**"Conflicting information found."**_
  */
-function conflict(res, errorMessage = "Conflicting information found.") {
+function conflict(
+  res,
+  errorMessage = "Conflicting information found.",
+  code = "CONFLICT"
+) {
   return res.status(409).json({
-    error: { message: errorMessage },
+    error: { code, message: errorMessage },
   });
 }
 
@@ -54,19 +73,34 @@ function conflict(res, errorMessage = "Conflicting information found.") {
  */
 function wrongPasswordOrUsername(res) {
   return res.status(401).json({
-    error: { message: "Username or Password is wrong." },
+    error: {
+      code: "WRONG_CREDENTIALS",
+      message: "Username or Password is wrong.",
+    },
+  });
+}
+
+/**
+ * ### _401_
+ * @param {Express.Response} res
+ * @param {String} errorMessage _(optional)_
+ * @returns {error} _error.message_ _**"One or more parameters are wrong."**_
+ */
+function wrongParams(res, errorMessage = "One or more parameters are wrong.") {
+  return res.status(401).json({
+    error: { code: "WRONG_PARAMS", message: errorMessage },
   });
 }
 
 /**
  * ### _400_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"One or more Body arguments is wrong."**_
  */
 function wrongBody(res, errorMessage = "One or more Body arguments is wrong.") {
   return res.status(400).json({
-    error: { message: errorMessage },
+    error: { code: "WRONG_BODY", message: errorMessage },
   });
 }
 
@@ -77,7 +111,10 @@ function wrongBody(res, errorMessage = "One or more Body arguments is wrong.") {
  */
 function missingAuth(res) {
   return res.status(401).json({
-    error: { message: "Authorization header missing" },
+    error: {
+      code: "MISSING_AUTH_HEADER",
+      message: "Authorization header missing.",
+    },
   });
 }
 
@@ -86,36 +123,44 @@ function missingAuth(res) {
  * @param {Express.Response} res
  * @returns {error} _error.message_ _**"Bearer token missing."**_
  */
-function missingBearer(res) {
+function missingToken(res) {
   return res.status(401).json({
-    error: { message: "Bearer token missing" },
+    error: {
+      code: "MISSING_TOKEN",
+      message: "Authorization Token is missing from request.",
+    },
   });
 }
 
 /**
  * ### _404_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
+ * @param {String} code _(optional)_
  * @returns {error} _error.message_ _**"Entry not found."**_
  */
-function notFound(res, errorMessage = "Entry not found.") {
+function notFound(
+  res,
+  errorMessage = "One or more Entries not found.",
+  code = "NOT_FOUND"
+) {
   return res.status(404).json({
-    error: { message: errorMessage },
+    error: { code, message: errorMessage },
   });
 }
 
 /**
  * ### _403_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"Insufficient permissions."**_
  */
 function insufficientPermissions(
   res,
-  errorMessage = "Insufficient permissions."
+  errorMessage = "Staff with Insufficient permissions."
 ) {
   return res.status(403).json({
-    error: { message: errorMessage },
+    error: { code: "NOT_ALLOWED", message: errorMessage },
   });
 }
 
@@ -125,13 +170,26 @@ function insufficientPermissions(
  * @returns {error} _error.message_ _**"Invalid token."**_
  */
 function invalidToken(res) {
-  return res.status(401).json({ error: { message: "Invalid token." } });
+  return res
+    .status(401)
+    .json({ error: { code: "INVALID_TOKEN", message: "Invalid token." } });
+}
+
+/**
+ * ### _401_
+ * @param {Express.Response} res
+ * @returns {error} _error.message_ _**"Expired token."**_
+ */
+function expiredToken(res) {
+  return res
+    .status(401)
+    .json({ error: { code: "EXPIRED_TOKEN", message: "Expired token." } });
 }
 
 /**
  * ### _500_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
  * @returns {error} _error.message_ _**"An Internal Server error occurred."**_
  */
 function internalError(
@@ -150,7 +208,7 @@ function internalError(
  * ### _500_
  * _**"DB_ERROR"**_
  * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
+ * @param {String} errorMessage _(optional)_
  * @returns {{error:{code:"UNEXPECTED_ERROR",message:"Unexpect database error."}}}
  */
 function dbError(res, errorMessage = "Unexpect database error.") {
@@ -163,40 +221,22 @@ function dbError(res, errorMessage = "Unexpect database error.") {
 }
 
 /**
- * ### _500_
- * _**"Unexpected server error. Try again later."**_
- * @param {Express.Response} res
- * @param {string} errorMessage _(optional)_
- * @returns {{error:{code:"UNEXPECTED_ERROR",message:"Unexpected server error. Try again later."}}}
- */
-function unexpectedError(
-  res,
-  errorMessage = "Unexpected server error. Try again later."
-) {
-  return res.status(500).json({
-    error: {
-      code: "UNEXPECTED_ERROR",
-      message: errorMessage,
-    },
-  });
-}
-
-/**
  * #### Many reusable Request Responses to go.
  */
 export const Responses = {
   missingAuth,
-  missingBearer,
+  missingToken,
   missingBody,
   missingParams,
   missingQuery,
   wrongBody,
   wrongPasswordOrUsername,
+  wrongParams,
   insufficientPermissions,
   internalError,
   invalidToken,
+  expiredToken,
   notFound,
   conflict,
   dbError,
-  unexpectedError,
 };

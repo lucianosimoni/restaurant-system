@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom';
+import { useStaffStore } from '../../store/staffStore';
+
 import CompSelect from '../../components/CompSelect';
-import { Button } from '@mui/material';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 export default function InitialSettings() {
+  const staff = useStaffStore((state) => state);
+
   const formSubmit = (e) => {
     e.preventDefault();
 
@@ -12,12 +16,9 @@ export default function InitialSettings() {
   return (
     <div className="flex flex-col w-full h-full p-8">
       <header>
-        <Link to={'/'}>
-          <button>Tela inicial</button>
-        </Link>
-
         <h1>Configurações Iniciais</h1>
         <p>Configuração inicial do dispositivo.</p>
+        <Typography>Autenticado como {staff.info.firstName}</Typography>
       </header>
 
       <main>

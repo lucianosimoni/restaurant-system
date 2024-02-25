@@ -1,99 +1,131 @@
 import { PrismaClient } from "@prisma/client";
+import { Errors } from "../utils/errorsUtils.js";
 const prisma = new PrismaClient();
 
+async function exist(field, value) {
+  try {
+    const countedField = await prisma.workstation.count({
+      where: { [field]: value },
+    });
+    return countedField > 0;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err);
+  }
+}
+
 /**
- * @param {*} data
+ * @param {{title:String,description:String,imageUrl:String,}} data
  */
 async function create(data) {
-  return await prisma.workstation.create({
-    data: {
-      title: data.title,
-      info: {
-        create: {
-          description: data.description,
-          imageUrl: data.imageUrl,
+  try {
+    const createdWorkstation = await prisma.workstation.create({
+      data: {
+        title: data.title,
+        authenticatedBy: { connect: { id: data.authenticatedBy } },
+        usableApps: {
+          connect: data.usableApps.map((appId) => ({ id: appId })),
+        },
+        info: {
+          create: {
+            description: data.description,
+            imageUrl: data.imageUrl,
+          },
         },
       },
-      setting: {
-        connect: {
-          id: data.workstationSettingId,
-        },
+      include: {
+        info: true,
+        usableApps: true,
       },
-    },
-    include: {
-      info: true,
-      setting: true,
-      sectors: true,
-    },
-  });
+    });
+
+    return createdWorkstation;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err, "creating workstation");
+  }
 }
 
 async function getAll(includeInfo = true) {
-  return await prisma.workstation.findMany({
-    include: {
-      info: includeInfo,
-    },
-  });
+  try {
+    const workstations = await prisma.workstation.findMany({
+      include: { info: includeInfo },
+    });
+
+    return workstations;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err, "getting all workstations");
+  }
 }
 
 async function getByTitle(workstationTitle, includeInfo = true) {
-  return await prisma.workstation.findUnique({
-    where: {
-      title: workstationTitle,
-    },
-    include: {
-      info: includeInfo,
-    },
-  });
+  try {
+    const workstation = await prisma.workstation.findUnique({
+      where: { title: workstationTitle },
+      include: { info: includeInfo },
+    });
+
+    return workstation;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err, "getting workstation by title");
+  }
 }
 
 async function getById(workstationId, includeInfo = true) {
-  return await prisma.workstation.findUnique({
-    where: {
-      id: workstationId,
-    },
-    include: {
-      info: includeInfo,
-    },
-  });
+  try {
+    const workstation = await prisma.workstation.findUnique({
+      where: { id: workstationId },
+      include: { info: includeInfo },
+    });
+
+    return workstation;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err, "getting workstation by id");
+  }
 }
 
 async function updateById(workstationId, data) {
-  return await prisma.workstation.update({
-    where: {
-      id: workstationId,
-    },
-    data: {
-      title: data.title,
-      info: {
-        update: {
-          description: data.description,
-          imageUrl: data.imageUrl,
+  try {
+    const updatedWorkstation = await prisma.workstation.update({
+      where: { id: workstationId },
+      data: {
+        title: data.title,
+        authenticatedBy: { connect: { id: data.authenticatedBy } },
+        usableApps: {
+          set: [],
+          connect: data.usableApps.map((appId) => ({ id: appId })),
+        },
+        info: {
+          update: {
+            description: data.description,
+            imageUrl: data.imageUrl,
+          },
         },
       },
-      setting: {
-        connect: {
-          id: data.workstationSettingId,
-        },
+      include: {
+        info: true,
+        usableApps: true,
       },
-    },
-    include: {
-      info: true,
-      setting: true,
-      sectors: true,
-    },
-  });
+    });
+
+    return updatedWorkstation;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err, "updating workstation by id");
+  }
 }
 
 async function deleteById(workstationId) {
-  return await prisma.workstation.delete({
-    where: {
-      id: workstationId,
-    },
-  });
+  try {
+    const deletedWorkstation = await prisma.workstation.delete({
+      where: { id: workstationId },
+    });
+
+    return deletedWorkstation;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err, "deleting workstation by id");
+  }
 }
 
 export const WorkstationModel = {
+  exist,
   create,
   getAll,
   getById,

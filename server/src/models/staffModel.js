@@ -2,6 +2,17 @@ import { PrismaClient } from "@prisma/client";
 import { Errors } from "../utils/errorsUtils.js";
 const prisma = new PrismaClient();
 
+async function exist(field, value) {
+  try {
+    const countedField = await prisma.staff.count({
+      where: { [field]: value },
+    });
+    return countedField > 0;
+  } catch (err) {
+    throw Errors.checkDatabaseError(err);
+  }
+}
+
 /**
  * @param {{username:String, passwordHash:String, firstName:String, lastName:String}} data
  */
@@ -24,8 +35,7 @@ async function create(data) {
     delete createdStaff.passwordHash;
     return createdStaff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "creating staff");
   }
 }
 
@@ -52,8 +62,7 @@ async function getAll(
 
     return sanitizedStaff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "getting all staff");
   }
 }
 
@@ -78,8 +87,7 @@ async function getById(
     delete staff.passwordHash;
     return staff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "getting staff by id");
   }
 }
 
@@ -101,17 +109,17 @@ async function getByUsername(
       },
     });
 
-    delete staff.passwordHash;
+    // TODO: Definitly decide if removing the passwordHash is the best practice for this issue.
+    // delete staff.passwordHash;
     return staff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "getting staff by username");
   }
 }
 
 /**
  * @param {Int} staffId
- * @param {{username:String, passwordHash:String, firstName:String, lastName:String}} data
+ * @param {{username:String, firstName:String, lastName:String}} data
  */
 async function updateById(staffId, data) {
   try {
@@ -132,8 +140,7 @@ async function updateById(staffId, data) {
     delete updatedStaff.passwordHash;
     return updatedStaff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "updating staff by id");
   }
 }
 
@@ -147,8 +154,7 @@ async function updatePasswordById(staffId, passwordHash) {
     delete updatedStaff.passwordHash;
     return updatedStaff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "updating staff password by id");
   }
 }
 
@@ -161,12 +167,12 @@ async function deleteById(staffId) {
     delete deletedStaff.passwordHash;
     return deletedStaff;
   } catch (err) {
-    console.error(err);
-    throw Errors.dbError();
+    throw Errors.checkDatabaseError(err, "deleting staff by id");
   }
 }
 
 export const StaffModel = {
+  exist,
   create,
   getAll,
   getById,
